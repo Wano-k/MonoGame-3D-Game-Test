@@ -10,6 +10,7 @@ namespace Test
 {
     class Camera : GameComponent
     {
+        // Attributes
         private Vector3 Position;
         private Vector3 Target;
         private Vector3 UpVector = Vector3.Up;
@@ -23,6 +24,11 @@ namespace Test
         }
         public Matrix World;
 
+
+
+        // -------------------------------------------------------------------
+        // Constructor
+        // -------------------------------------------------------------------
         public Camera(Game game, Vector3 position, Vector3 target)
             :base(game)
         {

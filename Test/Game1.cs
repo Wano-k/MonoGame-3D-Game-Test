@@ -11,6 +11,7 @@ namespace Test
         Camera camera;
         Map map;
         BasicEffect effect;
+        public static Texture2D currentFloorTex;
 
 
 
@@ -31,8 +32,10 @@ namespace Test
         protected override void Initialize()
         {
             // Create game components
-            camera = new Camera(this, new Vector3(0.0f, 0.0f, 5.0f), Vector3.Zero);
-            map = new Map(this, "testmap");
+            camera = new Camera(this, new Vector3(0.0f, 10.0f, 5.0f), Vector3.Zero);
+
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
+           
 
             base.Initialize();
         }
@@ -47,7 +50,10 @@ namespace Test
             effect = new BasicEffect(GraphicsDevice);
 
             // Textures loading
-            
+            currentFloorTex = Content.Load<Texture2D>("Pictures/Textures2D/Floors/rtp");
+
+            // Map
+            map = new Map(this.GraphicsDevice, "testmap");
         }
 
         // -------------------------------------------------------------------
@@ -83,7 +89,7 @@ namespace Test
             effect.Projection = camera.Projection;
             effect.World = camera.World;
 
-            this.map.Draw(gameTime);
+            this.map.Draw(gameTime,effect);
 
             base.Draw(gameTime);
         } 
