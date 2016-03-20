@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Users/Marie_MSI/Documents/Visual Studio 2015/Projects/Test/MonoGame-3D-Game-Test/Test/Content/Pictures/Textures2D/Floors/rtp.png</SourceFile>
+  <SourceTime>2016-03-17T06:49:09.3653195+01:00</SourceTime>
+  <DestFile>C:/Users/Marie_MSI/Documents/Visual Studio 2015/Projects/Test/MonoGame-3D-Game-Test/Test/Content/bin/DesktopGL/Pictures/Textures2D/Floors/rtp.xnb</DestFile>
+  <DestTime>2016-03-20T18:04:16.3959543+01:00</DestTime>
+  <Importer>TextureImporter</Importer>
+  <ImporterTime>2016-03-16T03:18:04+01:00</ImporterTime>
+  <Processor>TextureProcessor</Processor>
+  <ProcessorTime>2016-03-16T03:18:04+01:00</ProcessorTime>
+  <Parameters>
+    <Key>ColorKeyColor</Key>
+    <Value>255,0,255,255</Value>
+  </Parameters>
+  <Parameters>
+    <Key>ColorKeyEnabled</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>GenerateMipmaps</Key>
+    <Value>False</Value>
+  </Parameters>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>ResizeToPowerOfTwo</Key>
+    <Value>False</Value>
+  </Parameters>
+  <Parameters>
+    <Key>MakeSquare</Key>
+    <Value>False</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Color</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
