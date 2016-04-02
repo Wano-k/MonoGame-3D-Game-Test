@@ -6,12 +6,16 @@ namespace Test
 {
     public class Game1 : Game
     {
-        // Attributes
+        // Infos
         GraphicsDeviceManager graphics;
         Camera camera;
         Map map;
+        Hero hero;
         BasicEffect effect;
+
+        // Content
         public static Texture2D currentFloorTex;
+        public static Texture2D heroTex;
 
 
 
@@ -21,7 +25,13 @@ namespace Test
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            // Graphics
+            this.graphics = new GraphicsDeviceManager(this);
+            this.graphics.PreferredBackBufferWidth = 1024;
+            this.graphics.PreferredBackBufferHeight = 600;
+            Window.Title = "RPM Monogame Test";
+            
+            // Content
             Content.RootDirectory = "Content";
         }
 
@@ -32,10 +42,16 @@ namespace Test
         protected override void Initialize()
         {
             // Create game components
-            camera = new Camera(this, new Vector3(0.0f, 10.0f, 5.0f), Vector3.Zero);
+            camera = new Camera(this, Vector3.Zero, Vector3.Zero);
 
+            // Important graphic settings
             GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-           
+            GraphicsDevice.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None
+            };
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.Clear(Color.Transparent);
 
             base.Initialize();
         }
@@ -51,9 +67,11 @@ namespace Test
 
             // Textures loading
             currentFloorTex = Content.Load<Texture2D>("Pictures/Textures2D/Floors/rtp");
+            heroTex = Content.Load<Texture2D>("Pictures/Textures2D/Characters/lucas");
 
-            // Map
+            // Drawable objects
             map = new Map(this.GraphicsDevice, "testmap");
+            hero = new Hero(this.GraphicsDevice);
         }
 
         // -------------------------------------------------------------------
@@ -71,8 +89,12 @@ namespace Test
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            // Keyboard
+            KeyboardState kb = Keyboard.GetState();
+            if (kb.IsKeyDown(Keys.Escape)) Exit();
+
+            // Update camera
+            camera.Update(gameTime,hero,kb);
 
             base.Update(gameTime);
         }
@@ -83,13 +105,18 @@ namespace Test
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            // Background color
+            GraphicsDevice.Clear(new Color(205, 222, 227));
 
+            // Effect settings
             effect.View = camera.View;
             effect.Projection = camera.Projection;
             effect.World = camera.World;
+            effect.TextureEnabled = true;
 
+            // Drawing map + hero
             this.map.Draw(gameTime,effect);
+            this.hero.Draw(gameTime, effect);
 
             base.Draw(gameTime);
         } 

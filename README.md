@@ -18,3 +18,9 @@ If all the installation is ok (if not, there will probably be a conflict), go to
 ## Source code
 
 You can find all the source code into the **Test** directory (*.cs files). The solution ("Test.sln") has been created with Visual Studio Community 2015 on Windows 7 64bits, MonoGame 3.5, and a MonoGame Cross Platform Desktop Project.
+
+## How to play
+
+### Turn the camera
+
+Press left and right button to turn at 90° around Lucas.

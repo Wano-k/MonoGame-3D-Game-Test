@@ -4,6 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/Marie_MSI/Documents/Visual Studio 2015/Projects/Test/MonoGame-3D-Game-Test/Test/Content/../../../../../../../Desktop/rtp.png</File>
     <File>C:/Users/Marie_MSI/Documents/Visual Studio 2015/Projects/Test/MonoGame-3D-Game-Test/Test/Content/Pictures/Textures2D/Floors/rtp.png</File>
+    <File>C:/Users/Marie_MSI/Documents/Visual Studio 2015/Projects/Test/MonoGame-3D-Game-Test/Test/Content/Pictures/Textures2D/Characters/lucas.png</File>
   </SourceFiles>
 </SourceFileCollection>
