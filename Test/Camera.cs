@@ -17,9 +17,8 @@ namespace Test
         public Matrix Projection;
         public Matrix View { get { return Matrix.CreateLookAt(Position, Target, UpVector); } }
         public Matrix World;
-
-        public Double HorizontalAngle = -90.0, TargetAngle = -90.0, VerticalAngle = 0.0, Distance = 220.0, Height = 100.0;
-        private int RotateVelocity = 180;
+        public Double HorizontalAngle = -90.0, TargetAngle = -90.0, VerticalAngle = 0.0, Distance = 200.0, Height = 100.0;
+        public int RotateVelocity = 180;
         private Double RotateSteps = 90.0, RotateTick = 0.0;
 
 
@@ -27,13 +26,12 @@ namespace Test
         // Constructor
         // -------------------------------------------------------------------
 
-        public Camera(Game game, Vector3 position, Vector3 target)
+        public Camera(Game game)
             :base(game)
         {
-            this.Position = position;
-            this.Target = target;
-            
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, game.GraphicsDevice.Viewport.AspectRatio, 0.01f, 100000.0f);
+            Position = Vector3.Zero;
+            Target = Vector3.Zero;
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, game.GraphicsDevice.Viewport.AspectRatio, 1.0f, 10000.0f);
             World = Matrix.Identity;
         }
 
@@ -77,14 +75,14 @@ namespace Test
             }
 
             // Updating camera according to hero position
-            Target.X = hero.Position.X + hero.Size.X/4;
+            Target.X = hero.Position.X;
             Target.Y = hero.Position.Y;
-            Target.Y = hero.Position.Z;
+            Target.Z = hero.Position.Z;
 
             // Camera position
             Position.X = Target.X - (float)(Distance * Math.Cos(HorizontalAngle * Math.PI / 180.0));
             Position.Y = Target.Y - (float)(Distance * Math.Sin(VerticalAngle * Math.PI / 180.0)) + (float)Height;
-            Position.Z = Target.X - (float)(Distance * Math.Sin(HorizontalAngle * Math.PI / 180.0));
+            Position.Z = Target.Z - (float)(Distance * Math.Sin(HorizontalAngle * Math.PI / 180.0));
 
             // Rotate tick update
             RotateTick = gameTime.ElapsedGameTime.Milliseconds;

@@ -8,10 +8,12 @@ namespace Test
     {
         // Infos
         GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        BasicEffect effect;
+        SpriteFont font;
         Camera camera;
         Map map;
         Hero hero;
-        BasicEffect effect;
 
         // Content
         public static Texture2D currentFloorTex;
@@ -26,9 +28,10 @@ namespace Test
         public Game1()
         {
             // Graphics
-            this.graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 1024;
-            this.graphics.PreferredBackBufferHeight = 600;
+            graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 600;
+            graphics.ApplyChanges();
             Window.Title = "RPM Monogame Test";
             
             // Content
@@ -42,16 +45,7 @@ namespace Test
         protected override void Initialize()
         {
             // Create game components
-            camera = new Camera(this, Vector3.Zero, Vector3.Zero);
-
-            // Important graphic settings
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-            GraphicsDevice.RasterizerState = new RasterizerState()
-            {
-                CullMode = CullMode.None
-            };
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            GraphicsDevice.Clear(Color.Transparent);
+            camera = new Camera(this);
 
             base.Initialize();
         }
@@ -66,8 +60,16 @@ namespace Test
             effect = new BasicEffect(GraphicsDevice);
 
             // Textures loading
-            currentFloorTex = Content.Load<Texture2D>("Pictures/Textures2D/Floors/rtp");
-            heroTex = Content.Load<Texture2D>("Pictures/Textures2D/Characters/lucas");
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            System.IO.Stream stream;
+
+            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Floors/rtp.png");
+            currentFloorTex = Texture2D.FromStream(GraphicsDevice, stream);
+            //currentFloorTex = Content.Load<Texture2D>("Pictures/Textures2D/Floors/rtp");
+            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Characters/lucas.png");
+            heroTex = Texture2D.FromStream(GraphicsDevice, stream);
+            //heroTex = Content.Load<Texture2D>("Pictures/Textures2D/Characters/lucas");
+            font = Content.Load<SpriteFont>("Fonts/corbel");
 
             // Drawable objects
             map = new Map(this.GraphicsDevice, "testmap");
@@ -94,7 +96,8 @@ namespace Test
             if (kb.IsKeyDown(Keys.Escape)) Exit();
 
             // Update camera
-            camera.Update(gameTime,hero,kb);
+            hero.Update(gameTime, camera, map, kb);
+            camera.Update(gameTime, hero, kb);
 
             base.Update(gameTime);
         }
@@ -111,12 +114,26 @@ namespace Test
             // Effect settings
             effect.View = camera.View;
             effect.Projection = camera.Projection;
-            effect.World = camera.World;
+            effect.World = Matrix.Identity;
             effect.TextureEnabled = true;
 
             // Drawing map + hero
-            this.map.Draw(gameTime,effect);
-            this.hero.Draw(gameTime, effect);
+            map.Draw(gameTime, effect);
+            hero.Draw(gameTime, camera, effect);
+
+            //spriteBatch.DrawString()
+            spriteBatch.Begin();
+            spriteBatch.DrawString(font, "[" + hero.GetX() + "," + hero.GetY() + "]", new Vector2(10, 10), Color.Black);
+            spriteBatch.End();
+
+            // Important settings
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
+            GraphicsDevice.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None
+            };
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             base.Draw(gameTime);
         } 

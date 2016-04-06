@@ -21,6 +21,10 @@ You can find all the source code into the **Test** directory (*.cs files). The s
 
 ## How to play
 
+### Move Lucas
+
+Use WASD keys to move the character.
+
 ### Turn the camera
 
 Press left and right button to turn at 90° around Lucas.

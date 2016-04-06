@@ -16,7 +16,8 @@ namespace Test
         VertexBuffer vb;
         IndexBuffer ib;
         int[] indexes;
-        Game_map_portion[] portions;
+        public Game_map_portion[] portions;
+        public int[] Size = new int[2];
 
 
         // -------------------------------------------------------------------
@@ -26,6 +27,10 @@ namespace Test
         public Map(GraphicsDevice device, string mapName)
         {
             this.device = device;
+
+            // Size
+            Size[0] = (int)(WANOK.PORTION_RADIUS * WANOK.SQUARESIZE);
+            Size[1] = (int)(WANOK.PORTION_RADIUS * WANOK.SQUARESIZE);
 
             // Init portions
             portions = new Game_map_portion[WANOK.PORTION_RADIUS*WANOK.PORTION_RADIUS];
@@ -71,7 +76,7 @@ namespace Test
                 }
             }
 
-            this.ib = new IndexBuffer(this.device, IndexElementSize.ThirtyTwoBits, indexesList.Count, BufferUsage.WriteOnly);
+            this.ib = new IndexBuffer(this.device, IndexElementSize.ThirtyTwoBits, indexesList.Count, BufferUsage.None);
             this.ib.SetData(indexesList.ToArray());
             vb = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, vertexList.Count, BufferUsage.None);
             vb.SetData(vertexList.ToArray());
@@ -88,6 +93,15 @@ namespace Test
             float top = ((float)coords[1]) / Game1.currentFloorTex.Height;
             float bot = ((float)(coords[1]+coords[3])) / Game1.currentFloorTex.Height;
             float right = ((float)(coords[0] + coords[2])) / Game1.currentFloorTex.Width;
+
+            // Adjust in order to limit risk of textures flood
+            float width = left + right;
+            float height = top + bot;
+            int coef = 10000;
+            left += width / coef;
+            right -= width / coef;
+            top += height / coef;
+            bot -= height / coef;
 
             // Vertex Position and Texture
             return new VertexPositionTexture[]
@@ -107,7 +121,7 @@ namespace Test
         {
             // Effeect settings
             effect.Texture = Game1.currentFloorTex;
-            effect.World = Matrix.Identity * Matrix.CreateTranslation(0, 0, 0) * Matrix.CreateScale(WANOK.SQUARESIZE, 1.0f, WANOK.SQUARESIZE);
+            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARESIZE, 1.0f, WANOK.SQUARESIZE);
 
             // Converting to array
             VertexPositionTexture[] verticesArray = this.vertexList.ToArray();
@@ -117,7 +131,7 @@ namespace Test
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                this.device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesArray, 0, verticesArray.Length, indexesArray, 0, verticesArray.Length/2);
+                this.device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesArray, 0, verticesArray.Length, indexesArray, 0, verticesArray.Length / 2);
             }
         }
     }
