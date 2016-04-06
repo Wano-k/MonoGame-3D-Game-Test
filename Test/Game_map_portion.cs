@@ -29,13 +29,17 @@ namespace Test
             {
                 for (int j = pos_y; j < pos_y + 16; j++)
                 {
+                    /*
                     if ((i+ j) % 2 == 0)
                     {
+                    */
                         floors[0].Add(new int[] { i, j, 0, 0 });
+                    /*
                     }
                     else{
                         floors[1].Add(new int[] { i, j, 0, 0 });
                     }
+                    */
                 }
             }
         }

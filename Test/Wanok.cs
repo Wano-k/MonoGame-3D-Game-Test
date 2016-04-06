@@ -29,6 +29,6 @@ namespace Test
         };
         public static float SQUARESIZE = 16.0f;
         public static int PORTIONSIZE = 16;
-        public static int PORTION_RADIUS = 20;
+        public static int PORTION_RADIUS = 10;
     }
 }

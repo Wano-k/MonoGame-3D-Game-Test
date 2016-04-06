@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Test
 {
@@ -39,11 +41,23 @@ namespace Test
             {
                 for (int j = 0; j < WANOK.PORTION_RADIUS; j++)
                 {
+                    /*
                     portions[k] = new Game_map_portion(i*WANOK.PORTIONSIZE,j*WANOK.PORTIONSIZE);
+                    string json = JsonConvert.SerializeObject(portions[k]);
+                    FileStream fs = new FileStream("Content/Datas/Maps/MAP0001/"+i+"-"+j+".JSON", FileMode.Create);
+                    StreamWriter sw = new StreamWriter(fs);
+                    sw.WriteLine(json);
+                    sw.Close();
+                    fs.Close();
+                    */
+                    FileStream fs = new FileStream("Content/Datas/Maps/MAP0001/" + i + "-" + j + ".JSON", FileMode.Open);
+                    StreamReader sr = new StreamReader(fs);
+                    string json = sr.ReadToEnd();
+                    portions[k] = JsonConvert.DeserializeObject<Game_map_portion>(json);
                     k++;
                 }
             }
-            
+
             // Building vertex buffer indexed
             this.vertexList = new List<VertexPositionTexture>();
             this.indexesList = new List<int>();

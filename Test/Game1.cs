@@ -47,6 +47,8 @@ namespace Test
             // Create game components
             camera = new Camera(this);
 
+            LoadSettings();
+
             base.Initialize();
         }
 
@@ -70,6 +72,7 @@ namespace Test
             heroTex = Texture2D.FromStream(GraphicsDevice, stream);
             //heroTex = Content.Load<Texture2D>("Pictures/Textures2D/Characters/lucas");
             font = Content.Load<SpriteFont>("Fonts/corbel");
+            stream.Close();
 
             // Drawable objects
             map = new Map(this.GraphicsDevice, "testmap");
@@ -83,6 +86,21 @@ namespace Test
         protected override void UnloadContent()
         {
             
+        }
+
+        // -------------------------------------------------------------------
+        // LoadSettings
+        // -------------------------------------------------------------------
+
+        protected void LoadSettings()
+        {
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
+            GraphicsDevice.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None
+            };
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         // -------------------------------------------------------------------
@@ -127,13 +145,7 @@ namespace Test
             spriteBatch.End();
 
             // Important settings
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-            GraphicsDevice.RasterizerState = new RasterizerState()
-            {
-                CullMode = CullMode.None
-            };
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            LoadSettings();
 
             base.Draw(gameTime);
         } 
