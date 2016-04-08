@@ -3,7 +3,7 @@ A sample of a game that should be created with RPG Paper Maker (http://rpgpaperm
 
 ## Run the game on Windows
 
-Go to the **Release** directory and find the application **Test.exe**. Run it. 
+Go to the **Game** directory and find the application **Test.exe**. Run it. 
 
 ## Run the game on Linux
 
@@ -11,7 +11,7 @@ You have to install MonoGame packages to launch the game. Install those ones :
 
 > sudo apt-get install libopenal-dev mono-runtime gtk-sharp3
 
-If all the installation is ok (if not, there will probably be a conflict), go to the **Release** directory and run the game with this command :
+If all the installation is ok (if not, there will probably be a conflict), go to the **Game** directory and run the game with this command :
 
 > mono Test.exe
 
