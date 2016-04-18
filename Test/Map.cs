@@ -84,7 +84,7 @@ namespace Test
         // CreateFloorWithTex : coords = [x,y,width,height]
         // -------------------------------------------------------------------
 
-        private VertexPositionTexture[] CreateFloorWithTex(int x, int z, int[] coords)
+        protected VertexPositionTexture[] CreateFloorWithTex(int x, int z, int[] coords)
         {
             // Texture coords
             float left = ((float)coords[0]) / Game1.currentFloorTex.Width;
