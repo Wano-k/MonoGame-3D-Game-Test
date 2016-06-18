@@ -12,15 +12,11 @@ namespace Test
 {
     class Map
     {
-        GraphicsDevice device;
-        List<VertexPositionTexture> verticesList;
-        List<int> indexesList;
-        VertexPositionTexture[] verticesArray;
-        int[] indexesArray;
-        VertexBuffer vb;
-        IndexBuffer ib;
-        int[] indexes;
-        public int[] Size = new int[2];
+        GraphicsDevice Device;
+        VertexPositionColor[] GridVerticesArray;
+        VertexBuffer VBGrid;
+        public MapInfos MapInfos { get; set; }
+        public Dictionary<int[], GameMapPortion> Portions;
 
 
         // -------------------------------------------------------------------
@@ -29,85 +25,103 @@ namespace Test
 
         public Map(GraphicsDevice device, string mapName)
         {
-            this.device = device;
-
-            // Size
-            Size[0] = (int)(WANOK.PORTION_RADIUS * WANOK.SQUARESIZE);
-            Size[1] = (int)(WANOK.PORTION_RADIUS * WANOK.SQUARESIZE);
-
-            // Building vertex buffer indexed
-            this.verticesList = new List<VertexPositionTexture>();
-            this.indexesList = new List<int>();
-            this.indexes = new int[]
+            Device = device;
+            MapInfos = WANOK.LoadDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+            
+            // Map
+            Portions = new Dictionary<int[], GameMapPortion>(new IntArrayComparer());
+            
+            for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
             {
-                0, 1, 2, 0, 2, 3
-            };
-            int offset = 0, k = 0;
-            Game_map_portion portion;
-            for (int i = 0; i < WANOK.PORTION_RADIUS; i++)
-            {
-                for (int j = 0; j < WANOK.PORTION_RADIUS; j++)
+                for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
                 {
-                    // Reading each portions
-                    FileStream fs = new FileStream("Content/Datas/Maps/MAP0001/" + i + "-" + j + ".JSON", FileMode.Open);
-                    StreamReader sr = new StreamReader(fs);
-                    string json = sr.ReadToEnd();
-                    portion = JsonConvert.DeserializeObject<Game_map_portion>(json);
-
-                    for (int l = 0; l < portion.texture_floors.Count; l++)
-                    {
-                        for (int m = 0; m < portion.floors[l].Count; m++)
-                        {
-                            foreach (VertexPositionTexture vertex in CreateFloorWithTex(portion.floors[l][m][0], portion.floors[l][m][1], portion.texture_floors[l]))
-                            {
-                                this.verticesList.Add(vertex);
-                            }
-                            for (int n = 0; n < 6; n++)
-                            {
-                                this.indexesList.Add(indexes[n] + offset);
-                            }
-                            offset += 4;
-                        }
-                    }
-                    k++;
+                    LoadPortion(mapName, i, j, i, j);
                 }
             }
-            this.verticesArray = this.verticesList.ToArray();
-            this.indexesArray = this.indexesList.ToArray();
-            this.ib = new IndexBuffer(this.device, IndexElementSize.ThirtyTwoBits, this.indexesArray.Length, BufferUsage.None);
-            this.ib.SetData(this.indexesArray);
-            vb = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, this.verticesArray.Length, BufferUsage.None);
-            vb.SetData(this.verticesArray);
         }
 
         // -------------------------------------------------------------------
-        // CreateFloorWithTex : coords = [x,y,width,height]
+        // LoadPortion
         // -------------------------------------------------------------------
 
-        protected VertexPositionTexture[] CreateFloorWithTex(int x, int z, int[] coords)
+        public void LoadPortion(string mapName, int real_i, int real_j, int i, int j)
         {
-            // Texture coords
-            float left = ((float)coords[0]) / Game1.currentFloorTex.Width;
-            float top = ((float)coords[1]) / Game1.currentFloorTex.Height;
-            float bot = ((float)(coords[1]+coords[3])) / Game1.currentFloorTex.Height;
-            float right = ((float)(coords[0] + coords[2])) / Game1.currentFloorTex.Width;
+            
+            string path = Path.Combine(WANOK.MapsDirectoryPath, mapName, real_i + "-" + real_j + ".pmap");
 
-            // Adjust in order to limit risk of textures flood
-            float width = left + right;
-            float height = top + bot;
-            int coef = 10000;
-            left += width / coef;
-            right -= width / coef;
-            top += height / coef;
-            bot -= height / coef;
-
-            // Vertex Position and Texture
-            return new VertexPositionTexture[]
+            if (File.Exists(path))
             {
-                new VertexPositionTexture(new Vector3(x, 0, z), new Vector2(left, top)),
-                new VertexPositionTexture(new Vector3(x+1, 0, z), new Vector2(right, top)),
-                new VertexPositionTexture(new Vector3(x+1, 0, z+1), new Vector2(right, bot)),
-                new VertexPositionTexture(new Vector3(x, 0, z+1), new Vector2(left, bot))
+                GameMapPortion gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
+                Portions[new int[] { i, j }] = gamePortion;
+                gamePortion.CreatePortionFloor(Device, Game1.currentFloorTex);
+            }
+            else
+            {
+                Portions[new int[] { i, j }] = null;
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // CreateGrid
+        // -------------------------------------------------------------------
+
+        public void CreateGrid(int width, int height)
+        {
+            List<VertexPositionColor> gridVerticesList = new List<VertexPositionColor>();
+            // Columns
+            for (int i = 0; i <= width; i++)
+            {
+                foreach (VertexPositionColor vertex in CreateGridLine(i, 0, i, height))
+                {
+                    gridVerticesList.Add(vertex);
+                }
+            }
+            // Rows
+            for (int i = 0; i <= height; i++)
+            {
+                foreach (VertexPositionColor vertex in CreateGridLine(0, i, width, i))
+                {
+                    gridVerticesList.Add(vertex);
+                }
+            }
+            GridVerticesArray = gridVerticesList.ToArray();
+            VBGrid = new VertexBuffer(Device, typeof(VertexPositionColor), GridVerticesArray.Length, BufferUsage.WriteOnly);
+            VBGrid.SetData(GridVerticesArray);
+        }
+
+        // -------------------------------------------------------------------
+        // GenFloor
+        // -------------------------------------------------------------------
+
+        public void GenFloor(int[] portion)
+        {
+            if (Portions[portion] != null)
+            {
+                Portions[portion].GenFloor(Device, Game1.currentFloorTex);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // DisposeVertexBuffer
+        // -------------------------------------------------------------------
+
+        public void DisposeVertexBuffer()
+        {
+            Device.SetVertexBuffer(null);
+            VBGrid.Dispose();
+        }
+
+        // -------------------------------------------------------------------
+        // CreateGridLine
+        // -------------------------------------------------------------------
+
+        private VertexPositionColor[] CreateGridLine(int x1, int z1, int x2, int z2)
+        {
+            // Vertex Position and Texture
+            return new VertexPositionColor[]
+            {
+                new VertexPositionColor(new Vector3(x1, 0, z1), Color.White),
+                new VertexPositionColor(new Vector3(x2, 0, z2), Color.White)
             };
         }
 
@@ -117,16 +131,23 @@ namespace Test
 
         public void Draw(GameTime gameTime, BasicEffect effect)
         {
-            // Effect settings
-            effect.Texture = Game1.currentFloorTex;
-            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARESIZE, 1.0f, WANOK.SQUARESIZE);
-
-            // Drawing
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            // Drawing Floors
+            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
+            effect.VertexColorEnabled = false;
+            effect.TextureEnabled = true;
+            foreach (GameMapPortion gameMap in Portions.Values)
             {
-                pass.Apply();
-                this.device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, this.verticesArray, 0, this.verticesArray.Length, this.indexesArray, 0, this.verticesArray.Length / 2);
+                if (gameMap != null) gameMap.Draw(Device, effect, Game1.currentFloorTex);
             }
+        }
+
+        // -------------------------------------------------------------------
+        // DisposeBuffers
+        // -------------------------------------------------------------------
+
+        public void DisposeBuffers(int[] portion)
+        {
+            Portions[portion].DisposeBuffers(Device);
         }
     }
 }

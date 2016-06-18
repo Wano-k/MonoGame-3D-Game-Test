@@ -58,25 +58,23 @@ namespace Test
 
         protected override void LoadContent()
         {
+            
             // Effect
             effect = new BasicEffect(GraphicsDevice);
 
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
             System.IO.Stream stream;
-
-            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Floors/rtp.png");
+            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Tilesets/plains.png");
             currentFloorTex = Texture2D.FromStream(GraphicsDevice, stream);
-            //currentFloorTex = Content.Load<Texture2D>("Pictures/Textures2D/Floors/rtp");
             stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Characters/lucas.png");
             heroTex = Texture2D.FromStream(GraphicsDevice, stream);
-            //heroTex = Content.Load<Texture2D>("Pictures/Textures2D/Characters/lucas");
             font = Content.Load<SpriteFont>("Fonts/corbel");
             stream.Close();
-
+            
             // Drawable objects
-            map = new Map(this.GraphicsDevice, "testmap");
-            hero = new Hero(this.GraphicsDevice);
+            map = new Map(GraphicsDevice, "MAP0001");
+            hero = new Hero(GraphicsDevice);
         }
 
         // -------------------------------------------------------------------
@@ -116,7 +114,6 @@ namespace Test
             // Update camera
             hero.Update(gameTime, camera, map, kb);
             camera.Update(gameTime, hero, kb);
-
             base.Update(gameTime);
         }
 
@@ -128,7 +125,7 @@ namespace Test
         {
             // Background color
             GraphicsDevice.Clear(new Color(205, 222, 227));
-
+            
             // Effect settings
             effect.View = camera.View;
             effect.Projection = camera.Projection;
@@ -146,7 +143,7 @@ namespace Test
 
             // Important settings
             LoadSettings();
-
+            
             base.Draw(gameTime);
         } 
     }
