@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
+using RPG_Paper_Maker;
 
 namespace Test
 {
@@ -11,9 +13,9 @@ namespace Test
         SpriteBatch spriteBatch;
         BasicEffect effect;
         SpriteFont font;
-        Camera camera;
-        Map map;
-        Hero hero;
+        Camera Camera;
+        Map Map;
+        Hero Hero;
 
         // Content
         public static Texture2D currentFloorTex;
@@ -32,7 +34,7 @@ namespace Test
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
-            Window.Title = "RPM Monogame Test";
+            Window.Title = "Game";
             
             // Content
             Content.RootDirectory = "Content";
@@ -45,7 +47,7 @@ namespace Test
         protected override void Initialize()
         {
             // Create game components
-            camera = new Camera(this);
+            Camera = new Camera(this);
 
             LoadSettings();
 
@@ -58,23 +60,26 @@ namespace Test
 
         protected override void LoadContent()
         {
-            
+            WANOK.Game = this;
+
             // Effect
             effect = new BasicEffect(GraphicsDevice);
 
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            System.IO.Stream stream;
-            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Tilesets/plains.png");
+            Stream stream;
+            stream = TitleContainer.OpenStream(Path.Combine("Content", "Pictures", "Textures2D", "Tilesets", "plains.png"));
             currentFloorTex = Texture2D.FromStream(GraphicsDevice, stream);
-            stream = TitleContainer.OpenStream(@"Content/Pictures/Textures2D/Characters/lucas.png");
+            stream = TitleContainer.OpenStream(Path.Combine("Content", "Pictures", "Textures2D", "Characters", "lucas.png"));
             heroTex = Texture2D.FromStream(GraphicsDevice, stream);
             font = Content.Load<SpriteFont>("Fonts/corbel");
             stream.Close();
-            
-            // Drawable objects
-            map = new Map(GraphicsDevice, "MAP0001");
-            hero = new Hero(GraphicsDevice);
+
+            // Search for map start
+            SystemDatas system = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
+            if (system == null) WANOK.PrintError("System.rpmd version is not compatible.");
+            Map = new Map(GraphicsDevice, system.StartMapName);
+            Hero = new Hero(GraphicsDevice, new Vector3(system.StartPosition[0]*WANOK.SQUARE_SIZE, system.StartPosition[1], system.StartPosition[2] * WANOK.SQUARE_SIZE));
         }
 
         // -------------------------------------------------------------------
@@ -112,8 +117,8 @@ namespace Test
             if (kb.IsKeyDown(Keys.Escape)) Exit();
 
             // Update camera
-            hero.Update(gameTime, camera, map, kb);
-            camera.Update(gameTime, hero, kb);
+            Hero.Update(gameTime, Camera, Map, kb);
+            Camera.Update(gameTime, Hero, kb);
             base.Update(gameTime);
         }
 
@@ -127,18 +132,18 @@ namespace Test
             GraphicsDevice.Clear(new Color(205, 222, 227));
             
             // Effect settings
-            effect.View = camera.View;
-            effect.Projection = camera.Projection;
+            effect.View = Camera.View;
+            effect.Projection = Camera.Projection;
             effect.World = Matrix.Identity;
             effect.TextureEnabled = true;
 
             // Drawing map + hero
-            map.Draw(gameTime, effect);
-            hero.Draw(gameTime, camera, effect);
+            Map.Draw(gameTime, effect);
+            Hero.Draw(gameTime, Camera, effect);
 
             //spriteBatch.DrawString()
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, "[" + hero.GetX() + "," + hero.GetY() + "]", new Vector2(10, 10), Color.Black);
+            spriteBatch.DrawString(font, "[" + Hero.GetX() + "," + Hero.GetY() + "]", new Vector2(10, 10), Color.Black);
             spriteBatch.End();
 
             // Important settings

@@ -10,7 +10,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Test</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
+    <AssemblyName>RPG Paper Maker</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -55,6 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="ErrorBox.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameMapPortion.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="MapInfos.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemDatas.cs" />
     <Compile Include="Wanok.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +110,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Datas\Maps\MAP0001\infos.map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\System.rpmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

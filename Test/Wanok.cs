@@ -36,6 +36,7 @@ namespace Test
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 4;
         public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
+        public static Game1 Game;
 
 
         // -------------------------------------------------------------------
@@ -120,10 +121,18 @@ namespace Test
             catch (Exception e)
             {
                 obj = default(T);
-                System.Diagnostics.Debug.Write(e.Message);
             }
 
             return obj;
+        }
+
+        // -------------------------------------------------------------------
+        // LoadBinaryDatas
+        // -------------------------------------------------------------------
+
+        public static void PrintError(string message)
+        {
+            new ErrorBox(message).Run();
         }
     }
 }

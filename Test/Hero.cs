@@ -16,7 +16,7 @@ namespace Test
         // Constructor
         // -------------------------------------------------------------------
 
-        public Hero(GraphicsDevice device) : base(device, new Vector3(0, 0, 0), new Vector2(32, 32))
+        public Hero(GraphicsDevice device, Vector3 position) : base(device, position, new Vector2(32, 32))
         {
 
         }
