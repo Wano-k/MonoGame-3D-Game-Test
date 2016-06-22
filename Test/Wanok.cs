@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using RPG_Paper_Maker;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +37,7 @@ namespace Test
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 4;
         public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
-        public static Game1 Game;
+        public static SystemDatas SystemDatas;
 
 
         // -------------------------------------------------------------------
@@ -118,7 +119,7 @@ namespace Test
                 obj = (T)formatter.Deserialize(fs);
                 fs.Close();
             }
-            catch (Exception e)
+            catch
             {
                 obj = default(T);
             }

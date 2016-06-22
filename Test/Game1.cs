@@ -29,12 +29,14 @@ namespace Test
 
         public Game1()
         {
+            // Initialize
+            WANOK.SystemDatas = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
+            if (WANOK.SystemDatas == null) WANOK.PrintError("System.rpmd version is not compatible.");
+
             // Graphics
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 600;
-            graphics.ApplyChanges();
-            Window.Title = "Game";
+            SetWindowSettings(WANOK.SystemDatas.FullScreen);
+            Window.Title = WANOK.SystemDatas.GameName[WANOK.SystemDatas.Langs[0]];
             
             // Content
             Content.RootDirectory = "Content";
@@ -60,8 +62,6 @@ namespace Test
 
         protected override void LoadContent()
         {
-            WANOK.Game = this;
-
             // Effect
             effect = new BasicEffect(GraphicsDevice);
 
@@ -76,10 +76,8 @@ namespace Test
             stream.Close();
 
             // Search for map start
-            SystemDatas system = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
-            if (system == null) WANOK.PrintError("System.rpmd version is not compatible.");
-            Map = new Map(GraphicsDevice, system.StartMapName);
-            Hero = new Hero(GraphicsDevice, new Vector3(system.StartPosition[0]*WANOK.SQUARE_SIZE, system.StartPosition[1], system.StartPosition[2] * WANOK.SQUARE_SIZE));
+            Map = new Map(GraphicsDevice, WANOK.SystemDatas.StartMapName);
+            Hero = new Hero(GraphicsDevice, new Vector3(WANOK.SystemDatas.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.SystemDatas.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.SystemDatas.StartPosition[2], WANOK.SystemDatas.StartPosition[3] * WANOK.SQUARE_SIZE));
         }
 
         // -------------------------------------------------------------------
@@ -107,6 +105,26 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // SetWindowSettings
+        // -------------------------------------------------------------------
+
+        public void SetWindowSettings(bool isFullScreen)
+        {
+            if (isFullScreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.ToggleFullScreen();
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = WANOK.SystemDatas.ScreenWidth;
+                graphics.PreferredBackBufferHeight = WANOK.SystemDatas.ScreenHeight;
+            }
+            graphics.ApplyChanges();
+        }
+
+        // -------------------------------------------------------------------
         // Update
         // -------------------------------------------------------------------
 
@@ -115,6 +133,10 @@ namespace Test
             // Keyboard
             KeyboardState kb = Keyboard.GetState();
             if (kb.IsKeyDown(Keys.Escape)) Exit();
+            if (kb.IsKeyDown(Keys.LeftAlt) && kb.IsKeyDown(Keys.Enter))
+            {
+                SetWindowSettings(graphics.IsFullScreen);
+            }
 
             // Update camera
             Hero.Update(gameTime, Camera, Map, kb);
