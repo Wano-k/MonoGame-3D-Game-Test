@@ -49,10 +49,10 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
-        // GetY
+        // GetZ
         // -------------------------------------------------------------------
 
-        public int GetY()
+        public int GetZ()
         {
             return (int)((Position.Z + 1) / WANOK.SQUARE_SIZE);
         }

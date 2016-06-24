@@ -139,7 +139,7 @@ namespace Test
             }
 
             // Update camera
-            Hero.Update(gameTime, Camera, Map, kb);
+            Hero.Update(gameTime, Camera, Map.MapInfos, kb);
             Camera.Update(gameTime, Hero, kb);
             base.Update(gameTime);
         }
@@ -151,7 +151,7 @@ namespace Test
         protected override void Draw(GameTime gameTime)
         {
             // Background color
-            GraphicsDevice.Clear(new Color(205, 222, 227));
+            GraphicsDevice.Clear(WANOK.SystemDatas.Colors[Map.MapInfos.SkyColor].GetMonogameColor());
             
             // Effect settings
             effect.View = Camera.View;
@@ -163,10 +163,12 @@ namespace Test
             Map.Draw(gameTime, effect);
             Hero.Draw(gameTime, Camera, effect);
 
-            //spriteBatch.DrawString()
+            // Interface
+            /*
             spriteBatch.Begin();
             spriteBatch.DrawString(font, "[" + Hero.GetX() + "," + Hero.GetY() + "]", new Vector2(10, 10), Color.Black);
             spriteBatch.End();
+            */
 
             // Important settings
             LoadSettings();

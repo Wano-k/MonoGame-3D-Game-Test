@@ -32,7 +32,7 @@ namespace Test
             new Vector3(0.0f, 0.0f, 0.0f)
         };
         public static int BASIC_SQUARE_SIZE = 32;
-        public static int SQUARE_SIZE = 16;
+        public static int SQUARE_SIZE { get { return SystemDatas.SquareSize;} }
         public static float RELATION_SIZE { get { return (float)(BASIC_SQUARE_SIZE) / SQUARE_SIZE; } }
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 4;

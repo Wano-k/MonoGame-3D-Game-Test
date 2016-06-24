@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Test
+namespace RPG_Paper_Maker
 {
     [Serializable]
     public class IntArrayComparer : IEqualityComparer<int[]>

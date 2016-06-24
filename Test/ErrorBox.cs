@@ -76,23 +76,27 @@ namespace Test
 
             foreach (string word in words)
             {
-                Vector2 size = font.MeasureString(word);
-                if (linewidth + size.X < graphics.PreferredBackBufferWidth-20)
+                try
                 {
-                    sb.Append(word + " ");
-                    linewidth += size.X + spaceWidth;
+                    Vector2 size = font.MeasureString(word);
+                    if (linewidth + size.X < graphics.PreferredBackBufferWidth - 20)
+                    {
+                        sb.Append(word + " ");
+                        linewidth += size.X + spaceWidth;
+                    }
+                    else if (size.X > graphics.PreferredBackBufferWidth - 20)
+                    {
+                        sb.Append("\n" + word + " ");
+                        linewidth = size.X + spaceWidth;
+                    }
+                    else
+                    {
+                        sb.Append("\n" + word + " ");
+                        linewidth = size.X + spaceWidth;
+                    }
+                    if (font.MeasureString(sb).Y >= graphics.PreferredBackBufferHeight - 20) break;
                 }
-                else if (size.X > graphics.PreferredBackBufferWidth - 20)
-                {
-                    sb.Append("\n" + word + " ");
-                    linewidth = size.X + spaceWidth;
-                }
-                else
-                {
-                    sb.Append("\n" + word + " ");
-                    linewidth = size.X + spaceWidth;
-                }
-                if (font.MeasureString(sb).Y >= graphics.PreferredBackBufferHeight - 20) break;
+                catch { }
             }
 
             return sb.ToString();

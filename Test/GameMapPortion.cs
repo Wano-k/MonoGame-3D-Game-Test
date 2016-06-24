@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Test;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Test
+namespace RPG_Paper_Maker
 {
     [Serializable]
     class GameMapPortion
@@ -42,16 +43,6 @@ namespace Test
         public bool IsEmpty()
         {
             return (Floors.Count == 0);
-        }
-
-        // -------------------------------------------------------------------
-        // AddList
-        // -------------------------------------------------------------------
-
-        public void AddList<T, V>(Dictionary<T, List<V>> d, T key, V val)
-        {
-            if (!d.ContainsKey(key)) d[key] = new List<V>();
-            d[key].Add(val);
         }
 
         // -------------------------------------------------------------------
@@ -107,7 +98,7 @@ namespace Test
             int offset = 0;
             foreach (KeyValuePair<int[], int[]> entry in Floors)
             {
-                foreach (VertexPositionTexture vertex in CreateFloorWithTex(texture, entry.Key[0], entry.Key[2], entry.Value))
+                foreach (VertexPositionTexture vertex in CreateFloorWithTex(texture, entry.Key[0], (entry.Key[1] * WANOK.SQUARE_SIZE) + entry.Key[2], entry.Key[3], entry.Value))
                 {
                     verticesList.Add(vertex);
                 }
@@ -130,13 +121,13 @@ namespace Test
         // CreateFloorWithTex : coords = [x,y,width,height]
         // -------------------------------------------------------------------
 
-        protected VertexPositionTexture[] CreateFloorWithTex(Texture2D texture, int x, int z, int[] coords)
+        protected VertexPositionTexture[] CreateFloorWithTex(Texture2D texture, int x, int y, int z, int[] coords)
         {
             // Texture coords
-            float left = ((float)coords[0]) / texture.Width;
-            float top = ((float)coords[1]) / texture.Height;
-            float bot = ((float)(coords[1] + coords[3])) / texture.Height;
-            float right = ((float)(coords[0] + coords[2])) / texture.Width;
+            float left = ((float)coords[0] * WANOK.SQUARE_SIZE) / texture.Width;
+            float top = ((float)coords[1] * WANOK.SQUARE_SIZE) / texture.Height;
+            float bot = ((float)(coords[1] + coords[3]) * WANOK.SQUARE_SIZE) / texture.Height;
+            float right = ((float)(coords[0] + coords[2]) * WANOK.SQUARE_SIZE) / texture.Width;
 
             // Adjust in order to limit risk of textures flood
             float width = left + right;
@@ -150,10 +141,10 @@ namespace Test
             // Vertex Position and Texture
             return new VertexPositionTexture[]
             {
-                new VertexPositionTexture(new Vector3(x, 0, z), new Vector2(left, top)),
-                new VertexPositionTexture(new Vector3(x+1, 0, z), new Vector2(right, top)),
-                new VertexPositionTexture(new Vector3(x+1, 0, z+1), new Vector2(right, bot)),
-                new VertexPositionTexture(new Vector3(x, 0, z+1), new Vector2(left, bot))
+                new VertexPositionTexture(new Vector3(x, y, z), new Vector2(left, top)),
+                new VertexPositionTexture(new Vector3(x+1, y, z), new Vector2(right, top)),
+                new VertexPositionTexture(new Vector3(x+1, y, z+1), new Vector2(right, bot)),
+                new VertexPositionTexture(new Vector3(x, y, z+1), new Vector2(left, bot))
             };
         }
 

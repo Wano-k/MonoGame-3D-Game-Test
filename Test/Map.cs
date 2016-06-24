@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using RPG_Paper_Maker;
 
 namespace Test
 {
@@ -26,8 +27,8 @@ namespace Test
         public Map(GraphicsDevice device, string mapName)
         {
             Device = device;
-            MapInfos = WANOK.LoadDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
-            
+            MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+
             // Map
             Portions = new Dictionary<int[], GameMapPortion>(new IntArrayComparer());
             
@@ -35,7 +36,7 @@ namespace Test
             {
                 for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
                 {
-                    LoadPortion(mapName, i, j, i, j);
+                    LoadPortion(i, j, i, j);
                 }
             }
         }
@@ -44,10 +45,10 @@ namespace Test
         // LoadPortion
         // -------------------------------------------------------------------
 
-        public void LoadPortion(string mapName, int real_i, int real_j, int i, int j)
+        public void LoadPortion(int real_i, int real_j, int i, int j)
         {
             
-            string path = Path.Combine(WANOK.MapsDirectoryPath, mapName, real_i + "-" + real_j + ".pmap");
+            string path = Path.Combine(WANOK.MapsDirectoryPath, MapInfos.RealMapName, real_i + "-" + real_j + ".pmap");
 
             if (File.Exists(path))
             {
