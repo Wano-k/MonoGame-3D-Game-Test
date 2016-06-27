@@ -37,6 +37,7 @@ namespace Test
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 4;
         public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
+        public static string NONE_IMAGE_STRING = "<None>";
         public static SystemDatas SystemDatas;
 
 
@@ -133,7 +134,29 @@ namespace Test
 
         public static void PrintError(string message)
         {
-            new ErrorBox(message).Run();
+            try
+            {
+                new ErrorBox(message).Run();
+            }
+            catch { }
+        }
+
+        // -------------------------------------------------------------------
+        // GetColor
+        // -------------------------------------------------------------------
+
+        public static Color GetColor(int id)
+        {
+            return SystemColor.GetMonogameColor(SystemDatas.GetColorById(id));
+        }
+
+        // -------------------------------------------------------------------
+        // GetTilesetTexturePath
+        // -------------------------------------------------------------------
+
+        public static string GetTilesetTexturePath(int id)
+        {
+            return SystemDatas.GetTilesetById(id).Graphic.GetGraphicPath();
         }
     }
 }

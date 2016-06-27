@@ -68,8 +68,7 @@ namespace Test
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Stream stream;
-            stream = TitleContainer.OpenStream(Path.Combine("Content", "Pictures", "Textures2D", "Tilesets", "plains.png"));
-            currentFloorTex = Texture2D.FromStream(GraphicsDevice, stream);
+            FileStream fs;
             stream = TitleContainer.OpenStream(Path.Combine("Content", "Pictures", "Textures2D", "Characters", "lucas.png"));
             heroTex = Texture2D.FromStream(GraphicsDevice, stream);
             font = Content.Load<SpriteFont>("Fonts/corbel");
@@ -77,7 +76,14 @@ namespace Test
 
             // Search for map start
             Map = new Map(GraphicsDevice, WANOK.SystemDatas.StartMapName);
+            fs = new FileStream(WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset), FileMode.Open);
+            currentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
+            fs.Close();
+            
+            Map.LoadMap();
             Hero = new Hero(GraphicsDevice, new Vector3(WANOK.SystemDatas.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.SystemDatas.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.SystemDatas.StartPosition[2], WANOK.SystemDatas.StartPosition[3] * WANOK.SQUARE_SIZE));
+
+            stream.Close();
         }
 
         // -------------------------------------------------------------------
@@ -150,9 +156,6 @@ namespace Test
 
         protected override void Draw(GameTime gameTime)
         {
-            // Background color
-            GraphicsDevice.Clear(WANOK.SystemDatas.Colors[Map.MapInfos.SkyColor].GetMonogameColor());
-            
             // Effect settings
             effect.View = Camera.View;
             effect.Projection = Camera.Projection;

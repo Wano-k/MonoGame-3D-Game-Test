@@ -59,15 +59,20 @@
     <Compile Include="Event.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameMapPortion.cs" />
+    <Compile Include="GraphicKind.cs" />
     <Compile Include="Hero.cs" />
     <Compile Include="IntArrayComparer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapInfos.cs" />
+    <Compile Include="PassageKind.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuperListItem.cs" />
     <Compile Include="SystemColor.cs" />
     <Compile Include="SystemDatas.cs" />
+    <Compile Include="SystemGraphic.cs" />
+    <Compile Include="Tileset.cs" />
+    <Compile Include="TilesetPassage.cs" />
     <Compile Include="Wanok.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +117,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Datas\Maps\MAP0001\0-0.pmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Datas\Maps\MAP0001\infos.map">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

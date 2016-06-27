@@ -28,10 +28,16 @@ namespace Test
         {
             Device = device;
             MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+        }
 
-            // Map
+        // -------------------------------------------------------------------
+        // LoadMap
+        // -------------------------------------------------------------------
+
+        public void LoadMap()
+        {
             Portions = new Dictionary<int[], GameMapPortion>(new IntArrayComparer());
-            
+
             for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
             {
                 for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
@@ -132,6 +138,8 @@ namespace Test
 
         public void Draw(GameTime gameTime, BasicEffect effect)
         {
+            Device.Clear(WANOK.GetColor(MapInfos.SkyColor));
+
             // Drawing Floors
             effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
             effect.VertexColorEnabled = false;

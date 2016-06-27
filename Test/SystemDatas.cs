@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,22 +18,56 @@ namespace RPG_Paper_Maker
         public int ScreenHeight = 480;
         public bool FullScreen = false;
         public int SquareSize = 16;
-        public List<SystemColor> Colors = new List<SystemColor>(new SystemColor[] { SystemColor.BlackColor,
-                                                                                    SystemColor.BlackGrayColor });
-
+        public List<Tileset> Tilesets = new List<Tileset>();
+        public List<SystemColor> Colors = new List<SystemColor>();
+        public string PathRTP;
 
         // -------------------------------------------------------------------
-        // Constructor
+        // GetColorById
         // -------------------------------------------------------------------
 
-        public SystemDatas(string gameName)
+        public SystemColor GetColorById(int id)
         {
-            GameName = new Dictionary<string, string>();
-            Langs = new List<string>(new string[] { "eng", "fr" });
-            for (int i = 0; i < Langs.Count; i++)
-            {
-                GameName[Langs[i]] = gameName;
-            }
+            if (id > Colors.Count) return new SystemColor(-1);
+            return Colors.Find(i => i.Id == id);
+        }
+
+        // -------------------------------------------------------------------
+        // GetColorIndexById
+        // -------------------------------------------------------------------
+
+        public int GetColorIndexById(int id)
+        {
+            return Colors.IndexOf(GetColorById(id));
+        }
+
+        // -------------------------------------------------------------------
+        // GetTilesetById
+        // -------------------------------------------------------------------
+
+        public Tileset GetTilesetById(int id)
+        {
+            if (id > Tilesets.Count) return new Tileset(-1);
+            return Tilesets.Find(i => i.Id == id);
+        }
+
+        // -------------------------------------------------------------------
+        // GetTilesetIndexById
+        // -------------------------------------------------------------------
+
+        public int GetTilesetIndexById(int id)
+        {
+            return Tilesets.IndexOf(GetTilesetById(id));
+        }
+
+        // -------------------------------------------------------------------
+        // NoStart
+        // -------------------------------------------------------------------
+
+        public void NoStart()
+        {
+            StartMapName = "";
+            StartPosition = new int[] { 0, 0, 0 };
         }
     }
 }

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 namespace RPG_Paper_Maker
 {
     [Serializable]
-    public abstract class SuperListItem
+    public class TilesetPassage
     {
-        public int Id;
-        public string Name = "";
+        public PassageKind PassableCollision;
 
-        public abstract SuperListItem CreateCopy();
+        public TilesetPassage CreateCopy()
+        {
+            return new TilesetPassage();
+        }
     }
 }
