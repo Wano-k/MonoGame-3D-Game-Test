@@ -10,16 +10,18 @@ namespace Test
 {
     class Event
     {
-        protected GraphicsDevice device;
+        protected GraphicsDevice Device;
         public Vector3 Position;
         public Vector2 Size;
-        protected VertexPositionTexture[] vertices;
-        protected VertexBuffer vb;
-        protected IndexBuffer ib;
-        protected int[] indexes;
-        protected int Frame = 0, FrameInactive = 0, FrameTick = 0, FrameTickInactive = 0, FrameDuration = 200, FrameDurationInactive = 200;
+        protected VertexPositionTexture[] Vertices;
+        protected VertexBuffer VB;
+        protected IndexBuffer IB;
+        protected int[] Indexes;
+        protected int Frame = 0, FrameInactive = 0, FrameTick = 0, FrameTickInactive = 0, FrameDuration = 150, FrameDurationInactive = 200;
         protected int Frame_inactive = 0;
         protected bool Act = true;
+        protected Orientation OrientationEye = Orientation.South;
+
 
         // -------------------------------------------------------------------
         // Constructor
@@ -27,16 +29,16 @@ namespace Test
 
         public Event(GraphicsDevice device, Vector3 position, Vector2 size)
         {
-            this.device = device;
+            Device = device;
 
             // Position and size
-            this.Position = position;
-            this.Size = size;
+            Position = position;
+            Size = size;
 
             // Init buffers
-            this.vb = new VertexBuffer(this.device, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
-            this.ib = new IndexBuffer(this.device, IndexElementSize.ThirtyTwoBits, 6, BufferUsage.WriteOnly);
-            this.device.SetVertexBuffer(this.vb);
+            VB = new VertexBuffer(Device, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
+            IB = new IndexBuffer(Device, IndexElementSize.ThirtyTwoBits, 6, BufferUsage.WriteOnly);
+            Device.SetVertexBuffer(VB);
         }
 
         // -------------------------------------------------------------------
@@ -70,7 +72,7 @@ namespace Test
             float right = ((float)(coords[0] + coords[2])) / texture.Width;
 
             // Vertex Position and Texture
-            this.vertices = new VertexPositionTexture[]
+            Vertices = new VertexPositionTexture[]
            {
                new VertexPositionTexture(WANOK.VERTICESSPRITE[0], new Vector2(left,top)),
                new VertexPositionTexture(WANOK.VERTICESSPRITE[1], new Vector2(right,top)),
@@ -79,14 +81,14 @@ namespace Test
            };
 
             // Vertex Indexes
-            this.indexes = new int[]
+            Indexes = new int[]
             {
                 0, 1, 2, 0, 2, 3
             };
 
             // Update buffers
-            this.vb.SetData(this.vertices);
-            this.ib.SetData(this.indexes);
+            VB.SetData(Vertices);
+            IB.SetData(Indexes);
         }
 
         // -------------------------------------------------------------------
@@ -99,14 +101,23 @@ namespace Test
             int bounce = (Frame == 0 || Frame == 2) ? 0 : 1;
 
             // Setting effect
-            effect.Texture = Game1.heroTex;
             effect.World = Matrix.Identity * Matrix.CreateScale(Size.X, Size.Y, 1.0f) * Matrix.CreateTranslation(-Size.X / 2, 0, 0) * Matrix.CreateRotationY((float)((-camera.HorizontalAngle - 90) * Math.PI / 180.0)) * Matrix.CreateTranslation(Position.X, Position.Y + bounce, Position.Z);
-            CreateTex(new int[] { 0, 0, (int)Size.X, (int)Size.Y }, Game1.heroTex);
+
+            if (Act)
+            {
+                effect.Texture = Game1.HeroActTex;
+                CreateTex(new int[] { FrameInactive * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.HeroActTex);
+            }
+            else
+            {
+                effect.Texture = Game1.HeroTex;
+                CreateTex(new int[] { Frame * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.HeroTex);
+            }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                this.device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, this.vertices, 0, this.vertices.Length, this.indexes, 0, 2);
+                Device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Vertices, 0, Vertices.Length, Indexes, 0, 2);
             }
         }
     }

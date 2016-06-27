@@ -18,9 +18,7 @@ namespace Test
         Hero Hero;
 
         // Content
-        public static Texture2D currentFloorTex;
-        public static Texture2D heroTex;
-
+        public static Texture2D CurrentFloorTex, HeroTex, HeroActTex;
 
 
         // -------------------------------------------------------------------
@@ -67,23 +65,28 @@ namespace Test
 
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Stream stream;
             FileStream fs;
-            stream = TitleContainer.OpenStream(Path.Combine("Content", "Pictures", "Textures2D", "Characters", "lucas.png"));
-            heroTex = Texture2D.FromStream(GraphicsDevice, stream);
+            fs = new FileStream(Path.Combine("Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
+            HeroTex = Texture2D.FromStream(GraphicsDevice, fs);
+            fs = new FileStream(Path.Combine("Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
+            HeroActTex = Texture2D.FromStream(GraphicsDevice, fs);
             font = Content.Load<SpriteFont>("Fonts/corbel");
-            stream.Close();
+
+            /*
+            string heroPath = WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset);
+            fs = new FileStream(heroPath, FileMode.Open);
+            currentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
+            fs = new FileStream(Path.Combine(Path.GetDirectoryName(heroPath), Path.GetFileNameWithoutExtension(heroPath) + "_act" + Path.GetExtension(heroPath)), FileMode.Open);
+            */
 
             // Search for map start
             Map = new Map(GraphicsDevice, WANOK.SystemDatas.StartMapName);
             fs = new FileStream(WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset), FileMode.Open);
-            currentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
+            CurrentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
             fs.Close();
             
             Map.LoadMap();
             Hero = new Hero(GraphicsDevice, new Vector3(WANOK.SystemDatas.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.SystemDatas.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.SystemDatas.StartPosition[2], WANOK.SystemDatas.StartPosition[3] * WANOK.SQUARE_SIZE));
-
-            stream.Close();
         }
 
         // -------------------------------------------------------------------

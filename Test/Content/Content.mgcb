@@ -19,9 +19,3 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/corbel.spritefont
 
-#begin Pictures/Textures2D/Characters/lucas.png
-/copy:Pictures/Textures2D/Characters/lucas.png
-
-#begin Pictures/Textures2D/Floors/rtp.png
-/copy:Pictures/Textures2D/Floors/rtp.png
-

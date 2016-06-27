@@ -42,22 +42,6 @@ namespace Test
                 }
             }
 
-            if (kb.IsKeyDown(Keys.W))
-            {
-                x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
-                z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z > 0 && z_plus < 0) || (z < map.Height - 1 && z_plus > 0)) Position.Z += z_plus;
-                if (z_plus == 0 && ((x > 0 && x_plus < 0) || (x < map.Width - 1 && x_plus > 0))) Position.X += x_plus;
-                isAKeyDown = true;
-            }
-            if (kb.IsKeyDown(Keys.S))
-            {
-                x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
-                z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z < map.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0)) Position.Z -= z_plus;
-                if (z_plus == 0 && ((x < map.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0))) Position.X -= x_plus;
-                isAKeyDown = true;
-            }
             if (kb.IsKeyDown(Keys.A))
             {
                 x_plus = (int)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
@@ -65,6 +49,7 @@ namespace Test
                 if ((x > 0 && x_plus < 0) || (x < map.Width - 1 && x_plus > 0)) Position.X += x_plus;
                 if (x_plus == 0 && ((z > 0 && z_plus < 0) || (z < map.Height - 1 && z_plus > 0))) Position.Z += z_plus;
                 isAKeyDown = true;
+                OrientationEye = Orientation.West;
             }
             if (kb.IsKeyDown(Keys.D))
             {
@@ -73,6 +58,25 @@ namespace Test
                 if ((x < map.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0)) Position.X -= x_plus;
                 if (x_plus == 0 && ((z < map.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0))) Position.Z -= z_plus;
                 isAKeyDown = true;
+                OrientationEye = Orientation.East;
+            }
+            if (kb.IsKeyDown(Keys.W))
+            {
+                x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
+                z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
+                if ((z > 0 && z_plus < 0) || (z < map.Height - 1 && z_plus > 0)) Position.Z += z_plus;
+                if (z_plus == 0 && ((x > 0 && x_plus < 0) || (x < map.Width - 1 && x_plus > 0))) Position.X += x_plus;
+                isAKeyDown = true;
+                OrientationEye = Orientation.North;
+            }
+            if (kb.IsKeyDown(Keys.S))
+            {
+                x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
+                z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
+                if ((z < map.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0)) Position.Z -= z_plus;
+                if (z_plus == 0 && ((x < map.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0))) Position.X -= x_plus;
+                isAKeyDown = true;
+                OrientationEye = Orientation.South;
             }
 
             // Frame update

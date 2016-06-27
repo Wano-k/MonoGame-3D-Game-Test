@@ -60,7 +60,7 @@ namespace Test
             {
                 GameMapPortion gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
                 Portions[new int[] { i, j }] = gamePortion;
-                gamePortion.CreatePortionFloor(Device, Game1.currentFloorTex);
+                gamePortion.CreatePortionFloor(Device, Game1.CurrentFloorTex);
             }
             else
             {
@@ -104,7 +104,7 @@ namespace Test
         {
             if (Portions[portion] != null)
             {
-                Portions[portion].GenFloor(Device, Game1.currentFloorTex);
+                Portions[portion].GenFloor(Device, Game1.CurrentFloorTex);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Test
             effect.TextureEnabled = true;
             foreach (GameMapPortion gameMap in Portions.Values)
             {
-                if (gameMap != null) gameMap.Draw(Device, effect, Game1.currentFloorTex);
+                if (gameMap != null) gameMap.Draw(Device, effect, Game1.CurrentFloorTex);
             }
         }
 
