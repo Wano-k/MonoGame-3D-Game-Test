@@ -19,6 +19,7 @@ namespace RPG_Paper_Maker
         public bool FullScreen = false;
         public int SquareSize = 16;
         public List<Tileset> Tilesets = new List<Tileset>();
+        public List<SystemAutotile> Autotiles = new List<SystemAutotile>();
         public List<SystemColor> Colors = new List<SystemColor>();
         public string PathRTP;
 
@@ -33,15 +34,6 @@ namespace RPG_Paper_Maker
         }
 
         // -------------------------------------------------------------------
-        // GetColorIndexById
-        // -------------------------------------------------------------------
-
-        public int GetColorIndexById(int id)
-        {
-            return Colors.IndexOf(GetColorById(id));
-        }
-
-        // -------------------------------------------------------------------
         // GetTilesetById
         // -------------------------------------------------------------------
 
@@ -52,12 +44,13 @@ namespace RPG_Paper_Maker
         }
 
         // -------------------------------------------------------------------
-        // GetTilesetIndexById
+        // GetAutotileById
         // -------------------------------------------------------------------
 
-        public int GetTilesetIndexById(int id)
+        public SystemAutotile GetAutotileById(int id)
         {
-            return Tilesets.IndexOf(GetTilesetById(id));
+            if (id > Autotiles.Count) return new SystemAutotile(-1);
+            return Autotiles.Find(i => i.Id == id);
         }
 
         // -------------------------------------------------------------------

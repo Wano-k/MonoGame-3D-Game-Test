@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Test;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,13 +9,17 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using Test;
 
 namespace RPG_Paper_Maker
 {
     [Serializable]
     class GameMapPortion
     {
-        public Dictionary<int[], int[]> Floors = new Dictionary<int[], int[]>(new IntArrayComparer());
+        public Dictionary<int[], int[]> Floors;
+        public Dictionary<int, Autotiles> Autotiles;
+
+        // Floors
         [NonSerialized()]
         VertexBuffer VBFloor;
         [NonSerialized()]
@@ -34,57 +37,20 @@ namespace RPG_Paper_Maker
         public GameMapPortion()
         {
             Floors = new Dictionary<int[], int[]>(new IntArrayComparer());
+            Autotiles = new Dictionary<int, Autotiles>();
         }
-
+        
         // -------------------------------------------------------------------
-        // IsEmpty
-        // -------------------------------------------------------------------
-
-        public bool IsEmpty()
-        {
-            return (Floors.Count == 0);
-        }
-
-        // -------------------------------------------------------------------
-        // GetFloorTexture
+        // Generate Buffers
         // -------------------------------------------------------------------
 
-        public int[] GetFloorTexture(int[] coords)
-        {
-            if (Floors.ContainsKey(coords)) return Floors[coords];
-
-            return null;
-        }
-
-        // -------------------------------------------------------------------
-        // AddFloor
-        // -------------------------------------------------------------------
-
-        public void AddFloor(int[] coords, int[] newTexture)
-        {
-            // Adding the new floor
-            Floors[coords] = newTexture;
-        }
-
-        // -------------------------------------------------------------------
-        // GenFloor
-        // -------------------------------------------------------------------
+        #region Floors
 
         public void GenFloor(GraphicsDevice device, Texture2D texture)
         {
-            if (VBFloor != null)
-            {
-                device.SetVertexBuffer(null);
-                device.Indices = null;
-                VBFloor.Dispose();
-                IBFloor.Dispose();
-            }
-            CreatePortionFloor(device, texture);
+            DisposeBuffersFloor(device);
+            if (Floors.Count > 0) CreatePortionFloor(device, texture);
         }
-
-        // -------------------------------------------------------------------
-        // CreatePortionFloor
-        // -------------------------------------------------------------------
 
         public void CreatePortionFloor(GraphicsDevice device, Texture2D texture)
         {
@@ -117,10 +83,6 @@ namespace RPG_Paper_Maker
             VBFloor.SetData(VerticesFloorArray);
         }
 
-        // -------------------------------------------------------------------
-        // CreateFloorWithTex : coords = [x,y,width,height]
-        // -------------------------------------------------------------------
-
         protected VertexPositionTexture[] CreateFloorWithTex(Texture2D texture, int x, int y, int z, int[] coords)
         {
             // Texture coords
@@ -148,18 +110,31 @@ namespace RPG_Paper_Maker
             };
         }
 
+        #endregion
+
+        #region Autotiles
+
+        public void GenAutotiles(GraphicsDevice device)
+        {
+            foreach (Autotiles autotiles in Autotiles.Values)
+            {
+                autotiles.GenAutotiles(device);
+            }
+        }
+
+        #endregion
+
         // -------------------------------------------------------------------
         // Draw
         // -------------------------------------------------------------------
 
         public void Draw(GraphicsDevice device, BasicEffect effect, Texture2D texture)
         {
+            // Drawing Floors
             if (VBFloor != null)
             {
-                // Effect settings
                 effect.Texture = texture;
 
-                // Drawing
                 device.SetVertexBuffer(VBFloor);
                 device.Indices = IBFloor;
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -168,13 +143,32 @@ namespace RPG_Paper_Maker
                     device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VerticesFloorArray, 0, VerticesFloorArray.Length, IndexesFloorArray, 0, VerticesFloorArray.Length / 2);
                 }
             }
+
+            // Drawing Autotiles
+            foreach (KeyValuePair<int, Autotiles> entry in Autotiles)
+            {
+                entry.Value.Draw(device, effect);
+            }
         }
 
         // -------------------------------------------------------------------
         // DisposeBuffers
         // -------------------------------------------------------------------
 
-        public void DisposeBuffers(GraphicsDevice device)
+        public void DisposeBuffers(GraphicsDevice device, bool nullable = true)
+        {
+            DisposeBuffersFloor(device, nullable);
+            foreach (Autotiles autotiles in Autotiles.Values)
+            {
+                autotiles.DisposeBuffers(device, nullable);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // DisposeBuffersFloor
+        // -------------------------------------------------------------------
+
+        public void DisposeBuffersFloor(GraphicsDevice device, bool nullable = true)
         {
             if (VBFloor != null)
             {
@@ -182,6 +176,11 @@ namespace RPG_Paper_Maker
                 device.Indices = null;
                 VBFloor.Dispose();
                 IBFloor.Dispose();
+                if (nullable)
+                {
+                    VBFloor = null;
+                    IBFloor = null;
+                }
             }
         }
     }

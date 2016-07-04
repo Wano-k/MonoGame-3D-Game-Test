@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Test;
 
 namespace RPG_Paper_Maker
 {
@@ -11,24 +12,26 @@ namespace RPG_Paper_Maker
     {
         public static int MAX_TILESETS = 9999;
         public SystemGraphic Graphic;
-        public TilesetPassage[,] PassableCollision;
+        public Collision Collision;
+        public List<int> Autotiles = new List<int>();
 
 
         // -------------------------------------------------------------------
         // Constructors
         // -------------------------------------------------------------------
 
-        public Tileset(int id) : this(id, "", new SystemGraphic("plains.png", true, GraphicKind.Tileset), GetDefaultPassableCollision(8, 8))
+        public Tileset(int id) : this(id, "", new SystemGraphic(WANOK.NONE_IMAGE_STRING, true, GraphicKind.Tileset), new Collision(), new List<int>())
         {
 
         }
 
-        public Tileset(int id, string n, SystemGraphic graphic, TilesetPassage[,] passableCollision)
+        public Tileset(int id, string n, SystemGraphic graphic, Collision collision, List<int> autotiles)
         {
             Id = id;
             Name = n;
             Graphic = graphic;
-            PassableCollision = passableCollision;
+            Collision = collision;
+            Autotiles = autotiles;
         }
 
         // -------------------------------------------------------------------
@@ -37,26 +40,7 @@ namespace RPG_Paper_Maker
 
         public override SuperListItem CreateCopy()
         {
-            return new Tileset(Id, Name, Graphic.CreateCopy(), PassableCollision);
-        }
-
-        // -------------------------------------------------------------------
-        // GetDefaultPassableCollision
-        // -------------------------------------------------------------------
-
-        public static TilesetPassage[,] GetDefaultPassableCollision(int width, int height)
-        {
-            TilesetPassage[,] array = new TilesetPassage[width, height];
-
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    array[i, j] = new TilesetPassage();
-                }
-            }
-
-            return array;
+            return new Tileset(Id, Name, Graphic.CreateCopy(), Collision.CreateCopy(), new List<int>(Autotiles));
         }
     }
 }

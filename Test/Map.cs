@@ -14,8 +14,6 @@ namespace Test
     class Map
     {
         GraphicsDevice Device;
-        VertexPositionColor[] GridVerticesArray;
-        VertexBuffer VBGrid;
         public MapInfos MapInfos { get; set; }
         public Dictionary<int[], GameMapPortion> Portions;
 
@@ -28,6 +26,27 @@ namespace Test
         {
             Device = device;
             MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+
+            // Set textures
+            if (Game1.TexTileset != null) Game1.TexTileset.Dispose();
+            foreach (int i in Game1.TexAutotiles.Keys)
+            {
+                Game1.TexAutotiles[i].Dispose();
+            }
+            Game1.TexAutotiles.Clear();
+            Tileset tileset = WANOK.SystemDatas.GetTilesetById(MapInfos.Tileset);
+            FileStream fs;
+            var lol = tileset.Graphic.GetGraphicPath();
+            fs = new FileStream(tileset.Graphic.GetGraphicPath(), FileMode.Open);
+            Game1.TexTileset = Texture2D.FromStream(device, fs);
+            fs.Close();
+            for (int i = 0; i < tileset.Autotiles.Count; i++)
+            {
+                Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.SystemDatas.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
+            }
+
+            // Load map
+            LoadMap();
         }
 
         // -------------------------------------------------------------------
@@ -60,7 +79,7 @@ namespace Test
             {
                 GameMapPortion gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
                 Portions[new int[] { i, j }] = gamePortion;
-                gamePortion.CreatePortionFloor(Device, Game1.CurrentFloorTex);
+                GenTextures(gamePortion);
             }
             else
             {
@@ -69,67 +88,21 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
-        // CreateGrid
+        // GenTextures
         // -------------------------------------------------------------------
 
-        public void CreateGrid(int width, int height)
-        {
-            List<VertexPositionColor> gridVerticesList = new List<VertexPositionColor>();
-            // Columns
-            for (int i = 0; i <= width; i++)
-            {
-                foreach (VertexPositionColor vertex in CreateGridLine(i, 0, i, height))
-                {
-                    gridVerticesList.Add(vertex);
-                }
-            }
-            // Rows
-            for (int i = 0; i <= height; i++)
-            {
-                foreach (VertexPositionColor vertex in CreateGridLine(0, i, width, i))
-                {
-                    gridVerticesList.Add(vertex);
-                }
-            }
-            GridVerticesArray = gridVerticesList.ToArray();
-            VBGrid = new VertexBuffer(Device, typeof(VertexPositionColor), GridVerticesArray.Length, BufferUsage.WriteOnly);
-            VBGrid.SetData(GridVerticesArray);
-        }
-
-        // -------------------------------------------------------------------
-        // GenFloor
-        // -------------------------------------------------------------------
-
-        public void GenFloor(int[] portion)
+        public void GenTextures(int[] portion)
         {
             if (Portions[portion] != null)
             {
-                Portions[portion].GenFloor(Device, Game1.CurrentFloorTex);
+                GenTextures(Portions[portion]);
             }
         }
 
-        // -------------------------------------------------------------------
-        // DisposeVertexBuffer
-        // -------------------------------------------------------------------
-
-        public void DisposeVertexBuffer()
+        public void GenTextures(GameMapPortion portion)
         {
-            Device.SetVertexBuffer(null);
-            VBGrid.Dispose();
-        }
-
-        // -------------------------------------------------------------------
-        // CreateGridLine
-        // -------------------------------------------------------------------
-
-        private VertexPositionColor[] CreateGridLine(int x1, int z1, int x2, int z2)
-        {
-            // Vertex Position and Texture
-            return new VertexPositionColor[]
-            {
-                new VertexPositionColor(new Vector3(x1, 0, z1), Color.White),
-                new VertexPositionColor(new Vector3(x2, 0, z2), Color.White)
-            };
+            portion.GenFloor(Device, Game1.TexTileset);
+            portion.GenAutotiles(Device);
         }
 
         // -------------------------------------------------------------------
@@ -146,7 +119,7 @@ namespace Test
             effect.TextureEnabled = true;
             foreach (GameMapPortion gameMap in Portions.Values)
             {
-                if (gameMap != null) gameMap.Draw(Device, effect, Game1.CurrentFloorTex);
+                if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset);
             }
         }
 
@@ -154,9 +127,21 @@ namespace Test
         // DisposeBuffers
         // -------------------------------------------------------------------
 
-        public void DisposeBuffers(int[] portion)
+        public void DisposeBuffers(int[] portion, bool nullable = true)
         {
-            Portions[portion].DisposeBuffers(Device);
+            Portions[portion].DisposeBuffers(Device, nullable);
+        }
+
+        // -------------------------------------------------------------------
+        // DisposeVertexBuffer
+        // -------------------------------------------------------------------
+
+        public void DisposeVertexBuffer()
+        {
+            foreach (KeyValuePair<int[], GameMapPortion> entry in Portions)
+            {
+                if (entry.Value != null) DisposeBuffers(entry.Key);
+            }
         }
     }
 }

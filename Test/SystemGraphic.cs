@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -96,9 +97,32 @@ namespace RPG_Paper_Maker
                 case GraphicKind.Tileset:
                     return Path.Combine("Content", "Pictures", "Textures2D", "Tilesets");
                 case GraphicKind.Autotile:
-                    return "";
+                    return Path.Combine("Content", "Pictures", "Textures2D", "Autotiles");
                 default:
                     return "";
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LoadTexture
+        // -------------------------------------------------------------------
+
+        public Texture2D LoadTexture(GraphicsDevice device)
+        {
+            string path = "";
+            try
+            {
+                path = GetGraphicPath();
+                if (path == null) return Game1.TexNone;
+                using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    return Texture2D.FromStream(device, stream);
+                }
+            }
+            catch
+            {
+                WANOK.PrintError("Could not load " + path);
+                return null;
             }
         }
     }

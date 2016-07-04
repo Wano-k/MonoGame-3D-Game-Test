@@ -36,6 +36,7 @@ namespace Test
         public static float RELATION_SIZE { get { return (float)(BASIC_SQUARE_SIZE) / SQUARE_SIZE; } }
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 4;
+        public static int COEF_BORDER_TEX = 10000;
         public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
         public static string NONE_IMAGE_STRING = "<None>";
         public static SystemDatas SystemDatas;

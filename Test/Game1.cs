@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using RPG_Paper_Maker;
+using System.Collections.Generic;
 
 namespace Test
 {
@@ -18,7 +19,8 @@ namespace Test
         Hero Hero;
 
         // Content
-        public static Texture2D CurrentFloorTex, HeroTex, HeroActTex;
+        public static Texture2D TexTileset, TexHero, TexHeroAct, TexNone;
+        public static Dictionary<int, Texture2D> TexAutotiles = new Dictionary<int, Texture2D>();
 
 
         // -------------------------------------------------------------------
@@ -30,6 +32,7 @@ namespace Test
             // Initialize
             WANOK.SystemDatas = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
             if (WANOK.SystemDatas == null) WANOK.PrintError("System.rpmd version is not compatible.");
+            //WANOK.SystemDatas.PathRTP = "RTP";
 
             // Graphics
             graphics = new GraphicsDeviceManager(this);
@@ -66,10 +69,11 @@ namespace Test
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
             FileStream fs;
-            fs = new FileStream(Path.Combine("Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
-            HeroTex = Texture2D.FromStream(GraphicsDevice, fs);
-            fs = new FileStream(Path.Combine("Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
-            HeroActTex = Texture2D.FromStream(GraphicsDevice, fs);
+            fs = new FileStream(Path.Combine(WANOK.SystemDatas.PathRTP, "Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
+            TexHero = Texture2D.FromStream(GraphicsDevice, fs);
+            fs = new FileStream(Path.Combine(WANOK.SystemDatas.PathRTP, "Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
+            TexHeroAct = Texture2D.FromStream(GraphicsDevice, fs);
+            TexNone = new Texture2D(GraphicsDevice, 1, 1);
             font = Content.Load<SpriteFont>("Fonts/corbel");
 
             /*
@@ -81,11 +85,12 @@ namespace Test
 
             // Search for map start
             Map = new Map(GraphicsDevice, WANOK.SystemDatas.StartMapName);
+            /*
             fs = new FileStream(WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset), FileMode.Open);
             CurrentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
             fs.Close();
             
-            Map.LoadMap();
+            Map.LoadMap();*/
             Hero = new Hero(GraphicsDevice, new Vector3(WANOK.SystemDatas.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.SystemDatas.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.SystemDatas.StartPosition[2], WANOK.SystemDatas.StartPosition[3] * WANOK.SQUARE_SIZE));
         }
 

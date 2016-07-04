@@ -105,13 +105,13 @@ namespace Test
 
             if (Act)
             {
-                effect.Texture = Game1.HeroActTex;
-                CreateTex(new int[] { FrameInactive * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.HeroActTex);
+                effect.Texture = Game1.TexHeroAct;
+                CreateTex(new int[] { FrameInactive * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.TexHeroAct);
             }
             else
             {
-                effect.Texture = Game1.HeroTex;
-                CreateTex(new int[] { Frame * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.HeroTex);
+                effect.Texture = Game1.TexHero;
+                CreateTex(new int[] { Frame * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.TexHero);
             }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
