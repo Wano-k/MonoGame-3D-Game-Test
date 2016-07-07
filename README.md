@@ -3,7 +3,7 @@ A sample of a game that should be created with RPG Paper Maker (http://rpgpaperm
 
 ## Run the game on Windows
 
-Go to the **Game** directory and find the application **Test.exe**. Run it. 
+Go to the **Game** directory and find the application **Game.exe**. Run it. 
 
 ## Run the game on Linux
 

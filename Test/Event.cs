@@ -95,7 +95,7 @@ namespace Test
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GameTime gameTime, Camera camera, BasicEffect effect)
+        public void Draw(GameTime gameTime, Camera camera, AlphaTestEffect effect)
         {
             // Bounce
             int bounce = (Frame == 0 || Frame == 2) ? 0 : 1;

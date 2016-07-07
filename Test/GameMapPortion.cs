@@ -18,6 +18,7 @@ namespace RPG_Paper_Maker
     {
         public Dictionary<int[], int[]> Floors;
         public Dictionary<int, Autotiles> Autotiles;
+        public Dictionary<int[], Sprites> Sprites;
 
         // Floors
         [NonSerialized()]
@@ -38,6 +39,7 @@ namespace RPG_Paper_Maker
         {
             Floors = new Dictionary<int[], int[]>(new IntArrayComparer());
             Autotiles = new Dictionary<int, Autotiles>();
+            Sprites = new Dictionary<int[], Sprites>(new IntArrayComparer());
         }
         
         // -------------------------------------------------------------------
@@ -94,11 +96,10 @@ namespace RPG_Paper_Maker
             // Adjust in order to limit risk of textures flood
             float width = left + right;
             float height = top + bot;
-            int coef = 10000;
-            left += width / coef;
-            right -= width / coef;
-            top += height / coef;
-            bot -= height / coef;
+            left += width / WANOK.COEF_BORDER_TEX;
+            right -= width / WANOK.COEF_BORDER_TEX;
+            top += height / WANOK.COEF_BORDER_TEX;
+            bot -= height / WANOK.COEF_BORDER_TEX;
 
             // Vertex Position and Texture
             return new VertexPositionTexture[]
@@ -124,11 +125,23 @@ namespace RPG_Paper_Maker
 
         #endregion
 
+        #region Sprites
+
+        public void GenSprites(GraphicsDevice device)
+        {
+            foreach (KeyValuePair<int[], Sprites> entry in Sprites)
+            {
+                entry.Value.GenSprites(device, entry.Key);
+            }
+        }
+
+        #endregion
+
         // -------------------------------------------------------------------
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GraphicsDevice device, BasicEffect effect, Texture2D texture)
+        public void Draw(GraphicsDevice device, AlphaTestEffect effect, Texture2D texture, Camera camera)
         {
             // Drawing Floors
             if (VBFloor != null)
@@ -149,6 +162,12 @@ namespace RPG_Paper_Maker
             {
                 entry.Value.Draw(device, effect);
             }
+
+            // Drawing Sprites
+            foreach (Sprites sprites in Sprites.Values)
+            {
+                sprites.Draw(device, effect, camera);
+            }
         }
 
         // -------------------------------------------------------------------
@@ -161,6 +180,10 @@ namespace RPG_Paper_Maker
             foreach (Autotiles autotiles in Autotiles.Values)
             {
                 autotiles.DisposeBuffers(device, nullable);
+            }
+            foreach (Sprites sprites in Sprites.Values)
+            {
+                sprites.DisposeBuffers(device, nullable);
             }
         }
 

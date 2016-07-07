@@ -12,7 +12,7 @@ namespace Test
         // Infos
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        BasicEffect effect;
+        AlphaTestEffect effect;
         SpriteFont font;
         Camera Camera;
         Map Map;
@@ -32,7 +32,7 @@ namespace Test
             // Initialize
             WANOK.SystemDatas = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
             if (WANOK.SystemDatas == null) WANOK.PrintError("System.rpmd version is not compatible.");
-            //WANOK.SystemDatas.PathRTP = "RTP";
+            WANOK.SystemDatas.PathRTP = "RTP";
 
             // Graphics
             graphics = new GraphicsDeviceManager(this);
@@ -64,7 +64,9 @@ namespace Test
         protected override void LoadContent()
         {
             // Effect
-            effect = new BasicEffect(GraphicsDevice);
+            effect = new AlphaTestEffect(GraphicsDevice);
+            effect.AlphaFunction = CompareFunction.Greater;
+            effect.ReferenceAlpha = 1;
 
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -168,10 +170,9 @@ namespace Test
             effect.View = Camera.View;
             effect.Projection = Camera.Projection;
             effect.World = Matrix.Identity;
-            effect.TextureEnabled = true;
 
             // Drawing map + hero
-            Map.Draw(gameTime, effect);
+            Map.Draw(gameTime, effect, Camera);
             Hero.Draw(gameTime, Camera, effect);
 
             // Interface

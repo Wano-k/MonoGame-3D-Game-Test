@@ -24,8 +24,13 @@ namespace Test
 
         public Map(GraphicsDevice device, string mapName)
         {
+            string pathDir = Path.Combine(WANOK.MapsDirectoryPath, mapName);
+            if (!Directory.Exists(pathDir)) WANOK.PrintError("Error: could not find the " + mapName + " map directory.");
+            if (WANOK.SystemDatas.StartMapName == "") WANOK.PrintError("Error: could not find the start position.");
+
             Device = device;
-            MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+            MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(pathDir, "infos.map"));
+
 
             // Set textures
             if (Game1.TexTileset != null) Game1.TexTileset.Dispose();
@@ -35,11 +40,7 @@ namespace Test
             }
             Game1.TexAutotiles.Clear();
             Tileset tileset = WANOK.SystemDatas.GetTilesetById(MapInfos.Tileset);
-            FileStream fs;
-            var lol = tileset.Graphic.GetGraphicPath();
-            fs = new FileStream(tileset.Graphic.GetGraphicPath(), FileMode.Open);
-            Game1.TexTileset = Texture2D.FromStream(device, fs);
-            fs.Close();
+            Game1.TexTileset = tileset.Graphic.LoadTexture(device);
             for (int i = 0; i < tileset.Autotiles.Count; i++)
             {
                 Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.SystemDatas.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
@@ -77,9 +78,17 @@ namespace Test
 
             if (File.Exists(path))
             {
-                GameMapPortion gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
-                Portions[new int[] { i, j }] = gamePortion;
-                GenTextures(gamePortion);
+                GameMapPortion gamePortion;
+                try
+                {
+                    gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
+                    Portions[new int[] { i, j }] = gamePortion;
+                    GenTextures(gamePortion);
+                }
+                catch
+                {
+                    WANOK.PrintError("Error: could not load the map portion " + real_i + "-" + real_j + ".pmap");
+                }
             }
             else
             {
@@ -103,23 +112,23 @@ namespace Test
         {
             portion.GenFloor(Device, Game1.TexTileset);
             portion.GenAutotiles(Device);
+            portion.GenSprites(Device);
         }
 
         // -------------------------------------------------------------------
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GameTime gameTime, BasicEffect effect)
+        public void Draw(GameTime gameTime, AlphaTestEffect effect, Camera camera)
         {
             Device.Clear(WANOK.GetColor(MapInfos.SkyColor));
 
             // Drawing Floors
             effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
             effect.VertexColorEnabled = false;
-            effect.TextureEnabled = true;
             foreach (GameMapPortion gameMap in Portions.Values)
             {
-                if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset);
+                if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
             }
         }
 
