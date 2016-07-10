@@ -26,7 +26,7 @@ namespace Test
         // Update
         // -------------------------------------------------------------------
 
-        public void Update(GameTime gameTime, Camera camera, MapInfos map, KeyboardState kb)
+        public void Update(GameTime gameTime, Camera camera, Map map, KeyboardState kb)
         {
             double angle = camera.HorizontalAngle;
             int x = GetX(), z = GetZ(), x_plus, z_plus;
@@ -42,41 +42,41 @@ namespace Test
                 }
             }
 
-            if (kb.IsKeyDown(Keys.A))
+            if (kb.IsKeyDown(Keys.A)) // Left
             {
                 x_plus = (int)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
                 z_plus = (int)(speed * (Math.Sin((angle - 90.0) * Math.PI / 180.0)));
-                if ((x > 0 && x_plus < 0) || (x < map.Width - 1 && x_plus > 0)) Position.X += x_plus;
-                if (x_plus == 0 && ((z > 0 && z_plus < 0) || (z < map.Height - 1 && z_plus > 0))) Position.Z += z_plus;
+                if ((x > 0 && x_plus < 0) || (x < map.MapInfos.Width - 1 && x_plus > 0)) Position.X += x_plus;
+                if (x_plus == 0 && ((z > 0 && z_plus < 0) || (z < map.MapInfos.Height - 1 && z_plus > 0))) Position.Z += z_plus;
                 isAKeyDown = true;
-                OrientationEye = Orientation.West;
+                OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) - 1, 4);
             }
-            if (kb.IsKeyDown(Keys.D))
+            if (kb.IsKeyDown(Keys.D)) // Right
             {
                 x_plus = (int)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
                 z_plus = (int)(speed * (Math.Sin((angle - 90.0) * Math.PI / 180.0)));
-                if ((x < map.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0)) Position.X -= x_plus;
-                if (x_plus == 0 && ((z < map.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0))) Position.Z -= z_plus;
+                if ((x < map.MapInfos.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0)) Position.X -= x_plus;
+                if (x_plus == 0 && ((z < map.MapInfos.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0))) Position.Z -= z_plus;
                 isAKeyDown = true;
-                OrientationEye = Orientation.East;
+                OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) + 1, 4);
             }
-            if (kb.IsKeyDown(Keys.W))
+            if (kb.IsKeyDown(Keys.W)) // Up
             {
                 x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
                 z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z > 0 && z_plus < 0) || (z < map.Height - 1 && z_plus > 0)) Position.Z += z_plus;
-                if (z_plus == 0 && ((x > 0 && x_plus < 0) || (x < map.Width - 1 && x_plus > 0))) Position.X += x_plus;
+                if ((z > 0 && z_plus < 0) || (z < map.MapInfos.Height - 1 && z_plus > 0)) Position.Z += z_plus;
+                if (z_plus == 0 && ((x > 0 && x_plus < 0) || (x < map.MapInfos.Width - 1 && x_plus > 0))) Position.X += x_plus;
                 isAKeyDown = true;
-                OrientationEye = Orientation.North;
+                OrientationEye = map.Orientation;
             }
-            if (kb.IsKeyDown(Keys.S))
+            if (kb.IsKeyDown(Keys.S)) // Down
             {
                 x_plus = (int)(speed * (Math.Cos(angle * Math.PI / 180.0)));
                 z_plus = (int)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z < map.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0)) Position.Z -= z_plus;
-                if (z_plus == 0 && ((x < map.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0))) Position.X -= x_plus;
+                if ((z < map.MapInfos.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0)) Position.Z -= z_plus;
+                if (z_plus == 0 && ((x < map.MapInfos.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0))) Position.X -= x_plus;
                 isAKeyDown = true;
-                OrientationEye = Orientation.South;
+                OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) + 2, 4);
             }
 
             // Frame update

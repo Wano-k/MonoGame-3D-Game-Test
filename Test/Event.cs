@@ -20,7 +20,7 @@ namespace Test
         protected int Frame = 0, FrameInactive = 0, FrameTick = 0, FrameTickInactive = 0, FrameDuration = 150, FrameDurationInactive = 200;
         protected int Frame_inactive = 0;
         protected bool Act = true;
-        protected Orientation OrientationEye = Orientation.South;
+        public Orientation OrientationEye = Orientation.South;
 
 
         // -------------------------------------------------------------------
@@ -92,26 +92,37 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // Update
+        // -------------------------------------------------------------------
+
+        public void Update(Orientation orientationMap)
+        {
+            //OrientationEye = (Orientation)(((int)OrientationEye + (int)orientationMap + 1) % 4);
+        }
+
+        // -------------------------------------------------------------------
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GameTime gameTime, Camera camera, AlphaTestEffect effect)
+        public void Draw(GameTime gameTime, Camera camera, AlphaTestEffect effect, Orientation orientationMap)
         {
             // Bounce
             int bounce = (Frame == 0 || Frame == 2) ? 0 : 1;
+            int orientation = WANOK.Mod(((int)orientationMap - 2) * 3 + (int)OrientationEye, 4);
 
             // Setting effect
             effect.World = Matrix.Identity * Matrix.CreateScale(Size.X, Size.Y, 1.0f) * Matrix.CreateTranslation(-Size.X / 2, 0, 0) * Matrix.CreateRotationY((float)((-camera.HorizontalAngle - 90) * Math.PI / 180.0)) * Matrix.CreateTranslation(Position.X, Position.Y + bounce, Position.Z);
 
+
             if (Act)
             {
                 effect.Texture = Game1.TexHeroAct;
-                CreateTex(new int[] { FrameInactive * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.TexHeroAct);
+                CreateTex(new int[] { FrameInactive * 32, orientation * 32, (int)Size.X, (int)Size.Y }, Game1.TexHeroAct);
             }
             else
             {
                 effect.Texture = Game1.TexHero;
-                CreateTex(new int[] { Frame * 32, (int)OrientationEye * 32, (int)Size.X, (int)Size.Y }, Game1.TexHero);
+                CreateTex(new int[] { Frame * 32, orientation * 32, (int)Size.X, (int)Size.Y }, Game1.TexHero);
             }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)

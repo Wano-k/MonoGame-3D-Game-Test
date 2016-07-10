@@ -16,6 +16,7 @@ namespace Test
         GraphicsDevice Device;
         public MapInfos MapInfos { get; set; }
         public Dictionary<int[], GameMapPortion> Portions;
+        public Orientation Orientation = Orientation.North; // Camera orientation
 
 
         // -------------------------------------------------------------------
@@ -123,9 +124,6 @@ namespace Test
         {
             Device.Clear(WANOK.GetColor(MapInfos.SkyColor));
 
-            // Drawing Floors
-            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
-            effect.VertexColorEnabled = false;
             foreach (GameMapPortion gameMap in Portions.Values)
             {
                 if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);

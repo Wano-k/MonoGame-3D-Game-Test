@@ -20,6 +20,7 @@ namespace Test
         public Double HorizontalAngle = -90.0, TargetAngle = -90.0, VerticalAngle = 0.0, Distance = 200.0, Height = 100.0;
         public int RotateVelocity = 180;
         protected Double RotateSteps = 90.0, RotateTick = 0.0;
+        protected bool UpdateMapOrientation = false;
 
 
         // -------------------------------------------------------------------
@@ -39,7 +40,7 @@ namespace Test
         // Update
         // -------------------------------------------------------------------
 
-        public void Update(GameTime gameTime, Hero hero, KeyboardState kb)
+        public void Update(GameTime gameTime, Hero hero, KeyboardState kb, Map map)
         {
             // Horizontal angle
             if (TargetAngle != HorizontalAngle)
@@ -48,11 +49,31 @@ namespace Test
                 if (TargetAngle > HorizontalAngle)
                 {
                     HorizontalAngle += speed;
-                    if (HorizontalAngle > TargetAngle) HorizontalAngle = TargetAngle;
+                    if (HorizontalAngle > TargetAngle)
+                    {
+                        HorizontalAngle = TargetAngle;
+                        UpdateMapOrientation = false;
+                    }
+                    else if (!UpdateMapOrientation && TargetAngle - HorizontalAngle < (RotateSteps / 2))
+                    {
+                        UpdateMapOrientation = true;
+                        map.Orientation = (Orientation)(((int)map.Orientation + 1) % 4);
+                        if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye + 1) % 4);
+                    }
                 }
                 else if (TargetAngle < HorizontalAngle){
                     HorizontalAngle -= speed;
-                    if (HorizontalAngle < TargetAngle) HorizontalAngle = TargetAngle;
+                    if (HorizontalAngle < TargetAngle)
+                    {
+                        HorizontalAngle = TargetAngle;
+                        UpdateMapOrientation = false;
+                    }
+                    else if (!UpdateMapOrientation && HorizontalAngle - TargetAngle < (RotateSteps / 2))
+                    {
+                        UpdateMapOrientation = true;
+                        map.Orientation = (Orientation)(((int)map.Orientation - 1) % 4);
+                        if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye - 1) % 4);
+                    }
                 }
             }
             if (HorizontalAngle >= 270.0 || HorizontalAngle <= -450.0)
@@ -66,10 +87,14 @@ namespace Test
             {
                 if (kb.IsKeyDown(Keys.Left))
                 {
+                    //map.Orientation = (Orientation)(((int)map.Orientation - 1) % 4);
+                    //if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye - 1) % 4);
                     TargetAngle -= RotateSteps;
                 }
                 else if (kb.IsKeyDown(Keys.Right))
                 {
+                    //map.Orientation = (Orientation)(((int)map.Orientation + 1) % 4);
+                    //if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye + 1) % 4);
                     TargetAngle += RotateSteps;
                 }
             }

@@ -155,8 +155,8 @@ namespace Test
             }
 
             // Update camera
-            Hero.Update(gameTime, Camera, Map.MapInfos, kb);
-            Camera.Update(gameTime, Hero, kb);
+            Hero.Update(gameTime, Camera, Map, kb);
+            Camera.Update(gameTime, Hero, kb, Map);
             base.Update(gameTime);
         }
 
@@ -173,7 +173,7 @@ namespace Test
 
             // Drawing map + hero
             Map.Draw(gameTime, effect, Camera);
-            Hero.Draw(gameTime, Camera, effect);
+            Hero.Draw(gameTime, Camera, effect, Map.Orientation);
 
             // Interface
             /*

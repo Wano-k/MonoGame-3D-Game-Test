@@ -143,6 +143,8 @@ namespace RPG_Paper_Maker
 
         public void Draw(GraphicsDevice device, AlphaTestEffect effect, Texture2D texture, Camera camera)
         {
+            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
+
             // Drawing Floors
             if (VBFloor != null)
             {
@@ -164,9 +166,9 @@ namespace RPG_Paper_Maker
             }
 
             // Drawing Sprites
-            foreach (Sprites sprites in Sprites.Values)
+            foreach (KeyValuePair<int[], Sprites> entry in Sprites)
             {
-                sprites.Draw(device, effect, camera);
+                entry.Value.Draw(device, effect, camera, entry.Key[2]);
             }
         }
 

@@ -146,7 +146,7 @@ namespace RPG_Paper_Maker
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GraphicsDevice device, AlphaTestEffect effect, Camera camera)
+        public void Draw(GraphicsDevice device, AlphaTestEffect effect, Camera camera, int width)
         {
             if (VB != null)
             {
@@ -155,7 +155,7 @@ namespace RPG_Paper_Maker
                 device.Indices = IB;
                 foreach (int[] coords in ListSprites.Keys)
                 {
-                    ListSprites[coords].Draw(device, effect, VerticesArray, IndexesArray, camera, coords);
+                    ListSprites[coords].Draw(device, effect, VerticesArray, IndexesArray, camera, coords, width);
                 }
             }
         }
