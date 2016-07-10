@@ -32,7 +32,7 @@ namespace Test
             // Initialize
             WANOK.SystemDatas = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
             if (WANOK.SystemDatas == null) WANOK.PrintError("System.rpmd version is not compatible.");
-            WANOK.SystemDatas.PathRTP = "RTP";
+            //WANOK.SystemDatas.PathRTP = "RTP";
 
             // Graphics
             graphics = new GraphicsDeviceManager(this);
@@ -154,9 +154,11 @@ namespace Test
                 SetWindowSettings(graphics.IsFullScreen);
             }
 
-            // Update camera
+            // Update all
             Hero.Update(gameTime, Camera, Map, kb);
             Camera.Update(gameTime, Hero, kb, Map);
+            Map.Update(Hero.GetPortion());
+
             base.Update(gameTime);
         }
 

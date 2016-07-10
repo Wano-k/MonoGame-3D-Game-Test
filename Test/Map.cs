@@ -17,6 +17,7 @@ namespace Test
         public MapInfos MapInfos { get; set; }
         public Dictionary<int[], GameMapPortion> Portions;
         public Orientation Orientation = Orientation.North; // Camera orientation
+        public int[] CurrentPortion = new int[] { 0, 0 };
 
 
         // -------------------------------------------------------------------
@@ -117,6 +118,96 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // Update
+        // -------------------------------------------------------------------
+
+        public void Update(int[]  newPortion)
+        {
+            // Portion moving
+            if (newPortion[0] != CurrentPortion[0] || newPortion[1] != CurrentPortion[1])
+            {
+                UpdateMovingPortion(newPortion, CurrentPortion);
+            }
+            CurrentPortion = newPortion;
+        }
+
+        // -------------------------------------------------------------------
+        // UpdateMovingPortion
+        // -------------------------------------------------------------------
+
+        public void UpdateMovingPortion(int[] currentPortion, int[] previousPortion)
+        {
+            // If cursor going to right side
+            if (currentPortion[0] > previousPortion[0])
+            {
+                for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
+                {
+                    for (int i = -WANOK.PORTION_RADIUS; i < WANOK.PORTION_RADIUS; i++)
+                    {
+                        SetPortion(i, j, i + 1, j);
+                    }
+                    LoadPortion(currentPortion, WANOK.PORTION_RADIUS, j);
+                }
+            }
+            // If cursor going to left side
+            else if (currentPortion[0] < previousPortion[0])
+            {
+                for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
+                {
+                    for (int i = WANOK.PORTION_RADIUS; i > -WANOK.PORTION_RADIUS; i--)
+                    {
+                        SetPortion(i, j, i - 1, j);
+                    }
+                    LoadPortion(currentPortion, -WANOK.PORTION_RADIUS, j);
+                }
+            }
+            // If cursor going to up side
+            if (currentPortion[1] > previousPortion[1])
+            {
+                for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
+                {
+                    for (int j = -WANOK.PORTION_RADIUS; j < WANOK.PORTION_RADIUS; j++)
+                    {
+                        SetPortion(i, j, i, j + 1);
+                    }
+                    LoadPortion(currentPortion, i, WANOK.PORTION_RADIUS);
+                }
+            }
+            // If cursor going to down side
+            else if (currentPortion[1] < previousPortion[1])
+            {
+                for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
+                {
+                    for (int j = WANOK.PORTION_RADIUS; j > -WANOK.PORTION_RADIUS; j--)
+                    {
+                        SetPortion(i, j, i, j - 1);
+                    }
+                    LoadPortion(currentPortion, i, -WANOK.PORTION_RADIUS);
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // SetPortion
+        // -------------------------------------------------------------------
+
+        public void SetPortion(int i, int j, int k, int l)
+        {
+            DisposeBuffers(new int[] { i, j }, false);
+            Portions[new int[] { i, j }] = Portions[new int[] { k, l }];
+        }
+
+        // -------------------------------------------------------------------
+        // LoadPortion
+        // -------------------------------------------------------------------
+
+        public void LoadPortion(int[] currentPortion, int i, int j)
+        {
+            DisposeBuffers(new int[] { i, j }, false);
+            LoadPortion(currentPortion[0] + i, currentPortion[1] + j, i, j);
+        }
+
+        // -------------------------------------------------------------------
         // Draw
         // -------------------------------------------------------------------
 
@@ -136,7 +227,10 @@ namespace Test
 
         public void DisposeBuffers(int[] portion, bool nullable = true)
         {
-            Portions[portion].DisposeBuffers(Device, nullable);
+            if (Portions[portion] != null)
+            {
+                Portions[portion].DisposeBuffers(Device, nullable);
+            }
         }
 
         // -------------------------------------------------------------------
