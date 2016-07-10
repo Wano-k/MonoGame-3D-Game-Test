@@ -94,21 +94,25 @@ namespace RPG_Paper_Maker
             {
                 0, 1, 2, 0, 2, 3
             };
-            foreach (VertexPositionTexture vertex in CreateTex(Game1.TexTileset, texture))
-            {
-                verticesList.Add(vertex);
-            }
-            for (int n = 0; n < 6; n++)
-            {
-                indexesList.Add(indexes[n]);
-            }
 
-            VerticesArray = verticesList.ToArray();
-            IndexesArray = indexesList.ToArray();
-            IB = new IndexBuffer(device, IndexElementSize.ThirtyTwoBits, IndexesArray.Length, BufferUsage.None);
-            IB.SetData(IndexesArray);
-            VB = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, VerticesArray.Length, BufferUsage.None);
-            VB.SetData(VerticesArray);
+            if (texture[2] * WANOK.SQUARE_SIZE <= Game1.TexTileset.Width && texture[3] * WANOK.SQUARE_SIZE <= Game1.TexTileset.Height)
+            {
+                foreach (VertexPositionTexture vertex in CreateTex(Game1.TexTileset, texture))
+                {
+                    verticesList.Add(vertex);
+                }
+                for (int n = 0; n < 6; n++)
+                {
+                    indexesList.Add(indexes[n]);
+                }
+
+                VerticesArray = verticesList.ToArray();
+                IndexesArray = indexesList.ToArray();
+                IB = new IndexBuffer(device, IndexElementSize.ThirtyTwoBits, IndexesArray.Length, BufferUsage.None);
+                IB.SetData(IndexesArray);
+                VB = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, VerticesArray.Length, BufferUsage.None);
+                VB.SetData(VerticesArray);
+            }
         }
 
         // -------------------------------------------------------------------

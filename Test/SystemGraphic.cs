@@ -53,6 +53,7 @@ namespace RPG_Paper_Maker
 
         public string GetGraphicPath()
         {
+            if (IsNone()) return null;
             return IsRTP ? GetRTPPath(GraphicName) : GetLocalPath(GraphicName);
         }
 
@@ -121,7 +122,7 @@ namespace RPG_Paper_Maker
             }
             catch
             {
-                WANOK.PrintError("Could not load " + path);
+                WANOK.PrintError("Could not load the path " + path);
                 return null;
             }
         }

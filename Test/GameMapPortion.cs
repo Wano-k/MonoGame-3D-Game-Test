@@ -64,25 +64,33 @@ namespace RPG_Paper_Maker
                 0, 1, 2, 0, 2, 3
             };
             int offset = 0;
+
+
             foreach (KeyValuePair<int[], int[]> entry in Floors)
             {
-                foreach (VertexPositionTexture vertex in CreateFloorWithTex(texture, entry.Key[0], (entry.Key[1] * WANOK.SQUARE_SIZE) + entry.Key[2], entry.Key[3], entry.Value))
+                if (entry.Value[2] * WANOK.SQUARE_SIZE <= texture.Width && entry.Value[3] * WANOK.SQUARE_SIZE <= texture.Height)
                 {
-                    verticesList.Add(vertex);
+                    foreach (VertexPositionTexture vertex in CreateFloorWithTex(texture, entry.Key[0], (entry.Key[1] * WANOK.SQUARE_SIZE) + entry.Key[2], entry.Key[3], entry.Value))
+                    {
+                        verticesList.Add(vertex);
+                    }
+                    for (int n = 0; n < 6; n++)
+                    {
+                        indexesList.Add(indexes[n] + offset);
+                    }
+                    offset += 4;
                 }
-                for (int n = 0; n < 6; n++)
-                {
-                    indexesList.Add(indexes[n] + offset);
-                }
-                offset += 4;
             }
 
-            VerticesFloorArray = verticesList.ToArray();
-            IndexesFloorArray = indexesList.ToArray();
-            IBFloor = new IndexBuffer(device, IndexElementSize.ThirtyTwoBits, IndexesFloorArray.Length, BufferUsage.None);
-            IBFloor.SetData(IndexesFloorArray);
-            VBFloor = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, VerticesFloorArray.Length, BufferUsage.None);
-            VBFloor.SetData(VerticesFloorArray);
+            if (verticesList.Count > 0)
+            {
+                VerticesFloorArray = verticesList.ToArray();
+                IndexesFloorArray = indexesList.ToArray();
+                IBFloor = new IndexBuffer(device, IndexElementSize.ThirtyTwoBits, IndexesFloorArray.Length, BufferUsage.None);
+                IBFloor.SetData(IndexesFloorArray);
+                VBFloor = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, VerticesFloorArray.Length, BufferUsage.None);
+                VBFloor.SetData(VerticesFloorArray);
+            }
         }
 
         protected VertexPositionTexture[] CreateFloorWithTex(Texture2D texture, int x, int y, int z, int[] coords)
