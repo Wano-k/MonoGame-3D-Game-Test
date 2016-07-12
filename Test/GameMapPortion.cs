@@ -176,7 +176,7 @@ namespace RPG_Paper_Maker
             // Drawing Sprites
             foreach (KeyValuePair<int[], Sprites> entry in Sprites)
             {
-                entry.Value.Draw(device, effect, camera, entry.Key[2]);
+                entry.Value.Draw(device, effect, camera, entry.Key[2], entry.Key[3]);
             }
         }
 

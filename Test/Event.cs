@@ -65,7 +65,7 @@ namespace Test
 
         public int[] GetPortion()
         {
-            return new int[] { GetX() / WANOK.PORTION_SIZE, GetZ() / WANOK.PORTION_SIZE };
+            return WANOK.GetPortion(GetX(), GetZ());
         }
 
         // -------------------------------------------------------------------

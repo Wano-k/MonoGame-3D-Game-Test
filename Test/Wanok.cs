@@ -35,7 +35,7 @@ namespace Test
         public static int SQUARE_SIZE { get { return SystemDatas.SquareSize;} }
         public static float RELATION_SIZE { get { return (float)(BASIC_SQUARE_SIZE) / SQUARE_SIZE; } }
         public static int PORTION_SIZE = 16;
-        public static int PORTION_RADIUS = 4;
+        public static int PORTION_RADIUS = 6;
         public static int COEF_BORDER_TEX = 10000;
         public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
         public static string NONE_IMAGE_STRING = "<None>";
@@ -168,6 +168,15 @@ namespace Test
         {
             int r = x % m;
             return r < 0 ? r + m : r;
+        }
+
+        // -------------------------------------------------------------------
+        // GetPortion
+        // -------------------------------------------------------------------
+
+        public static int[] GetPortion(int x, int z)
+        {
+            return new int[] { x / PORTION_SIZE, z / PORTION_SIZE };
         }
     }
 }

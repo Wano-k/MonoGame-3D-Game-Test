@@ -17,7 +17,7 @@ namespace Test
         public MapInfos MapInfos { get; set; }
         public Dictionary<int[], GameMapPortion> Portions;
         public Orientation Orientation = Orientation.North; // Camera orientation
-        public int[] CurrentPortion = new int[] { 0, 0 };
+        public int[] CurrentPortion;
 
 
         // -------------------------------------------------------------------
@@ -29,10 +29,10 @@ namespace Test
             string pathDir = Path.Combine(WANOK.MapsDirectoryPath, mapName);
             if (!Directory.Exists(pathDir)) WANOK.PrintError("Error: could not find the " + mapName + " map directory.");
             if (WANOK.SystemDatas.StartMapName == "") WANOK.PrintError("Error: could not find the start position.");
-
+            CurrentPortion = WANOK.GetPortion(WANOK.SystemDatas.StartPosition[0], WANOK.SystemDatas.StartPosition[3]);
             Device = device;
             MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(pathDir, "infos.map"));
-
+           
 
             // Set textures
             if (Game1.TexTileset != null) Game1.TexTileset.Dispose();
@@ -59,12 +59,14 @@ namespace Test
         public void LoadMap()
         {
             Portions = new Dictionary<int[], GameMapPortion>(new IntArrayComparer());
+            int k = (WANOK.SystemDatas.StartPosition[0] / WANOK.PORTION_SIZE);
+            int l = (WANOK.SystemDatas.StartPosition[3] / WANOK.PORTION_SIZE);
 
             for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
             {
                 for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
                 {
-                    LoadPortion(i, j, i, j);
+                    LoadPortion(i + k, j + l, i, j);
                 }
             }
         }
@@ -121,7 +123,7 @@ namespace Test
         // Update
         // -------------------------------------------------------------------
 
-        public void Update(int[]  newPortion)
+        public void Update(int[] newPortion)
         {
             // Portion moving
             if (newPortion[0] != CurrentPortion[0] || newPortion[1] != CurrentPortion[1])

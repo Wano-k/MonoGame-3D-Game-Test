@@ -122,8 +122,8 @@ namespace RPG_Paper_Maker
             }
             catch
             {
-                WANOK.PrintError("Could not load the path " + path);
-                return null;
+                WANOK.PrintError("Could not load the image " + path);
+                return Game1.TexNone;
             }
         }
     }
