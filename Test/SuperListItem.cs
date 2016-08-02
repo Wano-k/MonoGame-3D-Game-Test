@@ -14,4 +14,10 @@ namespace RPG_Paper_Maker
 
         public abstract SuperListItem CreateCopy();
     }
+
+    [Serializable]
+    public abstract class ComboxBoxSpecialTilesetItem : SuperListItem
+    {
+        public SystemGraphic Graphic;
+    }
 }

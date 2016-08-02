@@ -10,7 +10,6 @@ namespace RPG_Paper_Maker
     public class Autotile
     {
         public int[] Tiles = new int[4];
-
     }
 }
 

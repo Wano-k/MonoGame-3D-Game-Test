@@ -41,11 +41,22 @@ namespace Test
                 Game1.TexAutotiles[i].Dispose();
             }
             Game1.TexAutotiles.Clear();
+            foreach (int i in Game1.TexReliefs.Keys)
+            {
+                Game1.TexReliefs[i].Dispose();
+            }
+            Game1.TexReliefs.Clear();
+
+
             Tileset tileset = WANOK.SystemDatas.GetTilesetById(MapInfos.Tileset);
             Game1.TexTileset = tileset.Graphic.LoadTexture(device);
             for (int i = 0; i < tileset.Autotiles.Count; i++)
             {
                 Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.SystemDatas.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
+            }
+            for (int i = 0; i < tileset.Reliefs.Count; i++)
+            {
+                Game1.TexReliefs[tileset.Reliefs[i]] = WANOK.SystemDatas.GetReliefById(tileset.Reliefs[i]).Graphic.LoadTexture(Device);
             }
 
             // Load map
@@ -117,6 +128,7 @@ namespace Test
             portion.GenFloor(Device, Game1.TexTileset);
             portion.GenAutotiles(Device);
             portion.GenSprites(Device);
+            portion.GenMountains(Device);
         }
 
         // -------------------------------------------------------------------
@@ -219,6 +231,10 @@ namespace Test
 
             foreach (GameMapPortion gameMap in Portions.Values)
             {
+                if (gameMap != null)
+                {
+
+                }
                 if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
             }
         }

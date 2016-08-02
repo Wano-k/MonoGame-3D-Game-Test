@@ -11,10 +11,12 @@ namespace RPG_Paper_Maker
         None,
         Floors,
         Autotiles,
+        Water,
         FaceSprite,
         FixSprite,
         DoubleSprite,
         QuadraSprite,
-        OnFloorSprite
+        OnFloorSprite,
+        Montains
     }
 }

@@ -68,6 +68,9 @@
     <Compile Include="IntArrayComparer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapInfos.cs" />
+    <Compile Include="Mountain.cs" />
+    <Compile Include="Mountains.cs" />
+    <Compile Include="MountainsGroup.cs" />
     <Compile Include="Orientation.cs" />
     <Compile Include="PassageKind.cs" />
     <Compile Include="Program.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="SystemColor.cs" />
     <Compile Include="SystemDatas.cs" />
     <Compile Include="SystemGraphic.cs" />
+    <Compile Include="SystemRelief.cs" />
     <Compile Include="Tileset.cs" />
     <Compile Include="TilesetPassage.cs" />
     <Compile Include="Wanok.cs" />
@@ -113,6 +117,12 @@
     <Content Include="RTP\Content\Pictures\Textures2D\Characters\lucas_act.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="RTP\Content\Pictures\Textures2D\Reliefs\grass.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="RTP\Content\Pictures\Textures2D\Reliefs\halloween.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="RTP\Content\Pictures\Textures2D\Tilesets\halloween.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -144,6 +154,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Datas\Maps\MAP0001\0-0.pmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\Maps\MAP0001\0-1.pmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\Maps\MAP0001\1-0.pmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\Maps\MAP0001\1-1.pmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Datas\Maps\MAP0001\infos.map">

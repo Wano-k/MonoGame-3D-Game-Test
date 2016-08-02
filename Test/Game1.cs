@@ -23,6 +23,7 @@ namespace Test
         // Content
         public static Texture2D TexTileset, TexHero, TexHeroAct, TexNone;
         public static Dictionary<int, Texture2D> TexAutotiles = new Dictionary<int, Texture2D>();
+        public static Dictionary<int, Texture2D> TexReliefs = new Dictionary<int, Texture2D>();
 
 
         // -------------------------------------------------------------------
