@@ -10,9 +10,11 @@ namespace Test
 {
     class Event
     {
+        public static double SpeedBasicCoef = 0.00666;
         protected GraphicsDevice Device;
         public Vector3 Position;
         public Vector2 Size;
+        public double Speed = 1.0;
         protected VertexPositionTexture[] Vertices;
         protected VertexBuffer VB;
         protected IndexBuffer IB;

@@ -17,9 +17,9 @@ namespace Test
         public Matrix Projection;
         public Matrix View { get { return Matrix.CreateLookAt(Position, Target, UpVector); } }
         public Matrix World;
-        public Double HorizontalAngle = -90.0, TargetAngle = -90.0, VerticalAngle = 0.0, Distance = 200.0, Height = 100.0;
+        public double HorizontalAngle = -90.0, TargetAngle = -90.0, VerticalAngle = 0.0, Distance = 200.0, Height = 100.0;
         public int RotateVelocity = 180;
-        protected Double RotateSteps = 90.0, RotateTick = 0.0;
+        protected double RotateSteps = 90.0, RotateTick = 0.0;
         protected bool UpdateMapOrientation = false;
 
 
