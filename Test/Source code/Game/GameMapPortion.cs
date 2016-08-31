@@ -141,7 +141,7 @@ namespace RPG_Paper_Maker
         {
             foreach (KeyValuePair<int[], Sprites> entry in Sprites)
             {
-                entry.Value.GenSprites(device, entry.Key);
+                entry.Value.GenSprites(device, Game1.TexTileset, entry.Key);
             }
         }
 

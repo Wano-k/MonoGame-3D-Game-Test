@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,40 +7,39 @@ using System.Threading.Tasks;
 namespace RPG_Paper_Maker
 {
     [Serializable]
-    public class SystemDatas
+    public class TilesetsDatas
     {
-        public Dictionary<string, string> GameName;
-        public List<string> Langs;
-        public string StartMapName = "MAP0001";
-        public int[] StartPosition = new int[] { 12, 0, 0, 12 };
-        public int ScreenWidth = 640;
-        public int ScreenHeight = 480;
-        public bool FullScreen = false;
-        public int SquareSize = 16;
-        public List<Tileset> Tilesets = new List<Tileset>();
+        public List<SystemTileset> TilesetsList = new List<SystemTileset>();
         public List<SystemAutotile> Autotiles = new List<SystemAutotile>();
         public List<SystemRelief> Reliefs = new List<SystemRelief>();
-        public List<SystemColor> Colors = new List<SystemColor>();
-        public string PathRTP;
+
 
         // -------------------------------------------------------------------
-        // GetColorById
+        // Constructor
         // -------------------------------------------------------------------
 
-        public SystemColor GetColorById(int id)
+        public TilesetsDatas()
         {
-            if (id > Colors.Count) return new SystemColor(-1);
-            return Colors.Find(i => i.Id == id);
+
         }
 
         // -------------------------------------------------------------------
         // GetTilesetById
         // -------------------------------------------------------------------
 
-        public Tileset GetTilesetById(int id)
+        public SystemTileset GetTilesetById(int id)
         {
-            if (id > Tilesets.Count) return new Tileset(-1);
-            return Tilesets.Find(i => i.Id == id);
+            if (id > TilesetsList.Count) return new SystemTileset(-1);
+            return TilesetsList.Find(i => i.Id == id);
+        }
+
+        // -------------------------------------------------------------------
+        // GetTilesetIndexById
+        // -------------------------------------------------------------------
+
+        public int GetTilesetIndexById(int id)
+        {
+            return TilesetsList.IndexOf(GetTilesetById(id));
         }
 
         // -------------------------------------------------------------------
@@ -50,8 +48,17 @@ namespace RPG_Paper_Maker
 
         public SystemAutotile GetAutotileById(int id)
         {
-            if (id > Autotiles.Count) return new SystemAutotile(-1);
+            if (id == -1 || id > Autotiles.Count) return new SystemAutotile(-1);
             return Autotiles.Find(i => i.Id == id);
+        }
+
+        // -------------------------------------------------------------------
+        // GetAutotileIndexById
+        // -------------------------------------------------------------------
+
+        public int GetAutotileIndexById(int id)
+        {
+            return Autotiles.IndexOf(GetAutotileById(id));
         }
 
         // -------------------------------------------------------------------
@@ -71,16 +78,6 @@ namespace RPG_Paper_Maker
         public int GetReliefIndexById(int id)
         {
             return Reliefs.IndexOf(GetReliefById(id));
-        }
-
-        // -------------------------------------------------------------------
-        // NoStart
-        // -------------------------------------------------------------------
-
-        public void NoStart()
-        {
-            StartMapName = "";
-            StartPosition = new int[] { 0, 0, 0 };
         }
     }
 }

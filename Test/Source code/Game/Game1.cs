@@ -21,9 +21,10 @@ namespace Test
         Hero Hero;
 
         // Content
-        public static Texture2D TexTileset, TexHero, TexHeroAct, TexNone;
+        public static Texture2D TexTileset, TexNone, TexHero, TexHeroAct;
         public static Dictionary<int, Texture2D> TexAutotiles = new Dictionary<int, Texture2D>();
         public static Dictionary<int, Texture2D> TexReliefs = new Dictionary<int, Texture2D>();
+        public static Dictionary<SystemGraphic, Texture2D> TexCharacters = new Dictionary<SystemGraphic, Texture2D>();
 
 
         // -------------------------------------------------------------------
@@ -33,14 +34,13 @@ namespace Test
         public Game1()
         {
             // Initialize
-            WANOK.SystemDatas = WANOK.LoadBinaryDatas<SystemDatas>(Path.Combine("Content", "Datas", "System.rpmd"));
-            if (WANOK.SystemDatas == null) WANOK.PrintError("System.rpmd version is not compatible.");
-            //WANOK.SystemDatas.PathRTP = "RTP";
+            WANOK.Game.LoadDatas();
+            WANOK.Game.System.PathRTP = "RTP";
 
             // Graphics
             graphics = new GraphicsDeviceManager(this);
-            SetWindowSettings(WANOK.SystemDatas.FullScreen);
-            Window.Title = WANOK.SystemDatas.GameName[WANOK.SystemDatas.Langs[0]];
+            SetWindowSettings(WANOK.Game.System.FullScreen);
+            Window.Title = WANOK.Game.System.GameName[WANOK.Game.System.Langs[0]];
             
             // Content
             Content.RootDirectory = "Content";
@@ -74,10 +74,12 @@ namespace Test
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
             FileStream fs;
-            fs = new FileStream(Path.Combine(WANOK.SystemDatas.PathRTP, "Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
+            fs = new FileStream(Path.Combine(WANOK.Game.System.PathRTP, "Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
             TexHero = Texture2D.FromStream(GraphicsDevice, fs);
-            fs = new FileStream(Path.Combine(WANOK.SystemDatas.PathRTP, "Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
+            fs.Close();
+            fs = new FileStream(Path.Combine(WANOK.Game.System.PathRTP, "Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
             TexHeroAct = Texture2D.FromStream(GraphicsDevice, fs);
+            fs.Close();
             TexNone = new Texture2D(GraphicsDevice, 1, 1);
             font = Content.Load<SpriteFont>("Fonts/corbel");
 
@@ -88,15 +90,8 @@ namespace Test
             fs = new FileStream(Path.Combine(Path.GetDirectoryName(heroPath), Path.GetFileNameWithoutExtension(heroPath) + "_act" + Path.GetExtension(heroPath)), FileMode.Open);
             */
 
-            // Search for map start
-            Map = new Map(GraphicsDevice, WANOK.SystemDatas.StartMapName);
-            /*
-            fs = new FileStream(WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset), FileMode.Open);
-            CurrentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
-            fs.Close();
-            
-            Map.LoadMap();*/
-            Hero = new Hero(GraphicsDevice, new Vector3(WANOK.SystemDatas.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.SystemDatas.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.SystemDatas.StartPosition[2], WANOK.SystemDatas.StartPosition[3] * WANOK.SQUARE_SIZE));
+            Map = new Map(GraphicsDevice, WANOK.Game.System.StartMapName);
+            Hero = new Hero(GraphicsDevice, new Vector3(WANOK.Game.System.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.Game.System.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.Game.System.StartPosition[2], WANOK.Game.System.StartPosition[3] * WANOK.SQUARE_SIZE));
         }
 
         // -------------------------------------------------------------------
@@ -137,10 +132,19 @@ namespace Test
             }
             else
             {
-                graphics.PreferredBackBufferWidth = WANOK.SystemDatas.ScreenWidth;
-                graphics.PreferredBackBufferHeight = WANOK.SystemDatas.ScreenHeight;
+                graphics.PreferredBackBufferWidth = WANOK.Game.System.ScreenWidth;
+                graphics.PreferredBackBufferHeight = WANOK.Game.System.ScreenHeight;
             }
             graphics.ApplyChanges();
+        }
+
+        // -------------------------------------------------------------------
+        // LoadSystemGraphic
+        // -------------------------------------------------------------------
+
+        public static void LoadSystemGraphic(SystemGraphic graphic, GraphicsDevice device)
+        {
+            if (!TexCharacters.ContainsKey(graphic)) TexCharacters[graphic] = graphic.LoadTexture(device);
         }
 
         // -------------------------------------------------------------------

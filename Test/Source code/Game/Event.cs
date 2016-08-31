@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Test
 {
-    class Event
+    class Event 
     {
         public static double SpeedBasicCoef = 0.00666;
         protected GraphicsDevice Device;

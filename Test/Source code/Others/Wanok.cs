@@ -32,14 +32,22 @@ namespace Test
             new Vector3(0.0f, 0.0f, 0.0f)
         };
         public static int BASIC_SQUARE_SIZE = 32;
-        public static int SQUARE_SIZE { get { return SystemDatas.SquareSize;} }
+        public static int SQUARE_SIZE { get { return Game.System.SquareSize; } }
         public static float RELATION_SIZE { get { return (float)(BASIC_SQUARE_SIZE) / SQUARE_SIZE; } }
         public static int PORTION_SIZE = 16;
         public static int PORTION_RADIUS = 6;
         public static int COEF_BORDER_TEX = 10000;
-        public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
         public static string NONE_IMAGE_STRING = "<None>";
-        public static SystemDatas SystemDatas;
+        public static string TILESET_IMAGE_STRING = "<Tileset>";
+        public static GameDatas Game = new GameDatas();
+        public static string CurrentLang = "eng";
+
+        // PATHS
+        public static string HeroesPath { get { return Path.Combine("Content", "Datas", "Heroes.rpmd"); } }
+        public static string SystemPath { get { return Path.Combine("Content", "Datas", "System.rpmd"); } }
+        public static string BattleSystemPath { get { return Path.Combine("Content", "Datas", "BattleSystem.rpmd"); } }
+        public static string TilesetsPath { get { return Path.Combine("Content", "Datas", "Tilesets.rpmd"); } }
+        public static string MapsDirectoryPath { get { return Path.Combine("Content", "Datas", "Maps"); } }
 
 
         // -------------------------------------------------------------------
@@ -143,12 +151,23 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // LoadPortionMap
+        // -------------------------------------------------------------------
+
+        public static GameMapPortion LoadPortionMap(string mapName, int i, int j)
+        {
+            string path = Path.Combine(MapsDirectoryPath, mapName, i + "-" + j + ".pmap");
+            if (File.Exists(path)) return LoadBinaryDatas<GameMapPortion>(path);
+            else return null;
+        }
+
+        // -------------------------------------------------------------------
         // GetColor
         // -------------------------------------------------------------------
 
         public static Color GetColor(int id)
         {
-            return SystemColor.GetMonogameColor(SystemDatas.GetColorById(id));
+            return SystemColor.GetMonogameColor(Game.System.GetColorById(id));
         }
 
         // -------------------------------------------------------------------
@@ -157,7 +176,7 @@ namespace Test
 
         public static string GetTilesetTexturePath(int id)
         {
-            return SystemDatas.GetTilesetById(id).Graphic.GetGraphicPath();
+            return Game.Tilesets.GetTilesetById(id).Graphic.GetGraphicPath();
         }
 
         // -------------------------------------------------------------------
@@ -177,6 +196,18 @@ namespace Test
         public static int[] GetPortion(int x, int z)
         {
             return new int[] { x / PORTION_SIZE, z / PORTION_SIZE };
+        }
+
+        // -------------------------------------------------------------------
+        // GetDefaultNames
+        // -------------------------------------------------------------------
+
+        public static Dictionary<string, string> GetDefaultNames(string name = "")
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["eng"] = name;
+
+            return dic;
         }
     }
 }

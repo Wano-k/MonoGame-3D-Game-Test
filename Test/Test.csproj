@@ -54,38 +54,53 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Autotile.cs" />
-    <Compile Include="Autotiles.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="Collision.cs" />
-    <Compile Include="DrawType.cs" />
-    <Compile Include="ErrorBox.cs" />
-    <Compile Include="Event.cs" />
-    <Compile Include="Game1.cs" />
-    <Compile Include="GameMapPortion.cs" />
-    <Compile Include="GraphicKind.cs" />
-    <Compile Include="Hero.cs" />
-    <Compile Include="IntArrayComparer.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="MapInfos.cs" />
-    <Compile Include="Mountain.cs" />
-    <Compile Include="Mountains.cs" />
-    <Compile Include="MountainsGroup.cs" />
-    <Compile Include="Orientation.cs" />
-    <Compile Include="PassageKind.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Source code\Enums\ComparaisonMeasure.cs" />
+    <Compile Include="Source code\Enums\EventCommandKind.cs" />
+    <Compile Include="Source code\Enums\EventTrigger.cs" />
+    <Compile Include="Source code\Game\Autotile.cs" />
+    <Compile Include="Source code\Game\Autotiles.cs" />
+    <Compile Include="Source code\Game\Camera.cs" />
+    <Compile Include="Source code\Models\Events.cs" />
+    <Compile Include="Source code\Game\EventsPortion.cs" />
+    <Compile Include="Source code\Models\BattleSystemDatas.cs" />
+    <Compile Include="Source code\Models\Collision.cs" />
+    <Compile Include="Source code\Enums\DrawType.cs" />
+    <Compile Include="Source code\Others\ErrorBox.cs" />
+    <Compile Include="Source code\Game\Event.cs" />
+    <Compile Include="Source code\Game\Game1.cs" />
+    <Compile Include="Source code\Game\GameMapPortion.cs" />
+    <Compile Include="Source code\Enums\GraphicKind.cs" />
+    <Compile Include="Source code\Game\Hero.cs" />
+    <Compile Include="Source code\Models\EventCommand.cs" />
+    <Compile Include="Source code\Models\GameDatas.cs" />
+    <Compile Include="Source code\Models\HeroesDatas.cs" />
+    <Compile Include="Source code\Models\SystemElement.cs" />
+    <Compile Include="Source code\Models\SystemEvent.cs" />
+    <Compile Include="Source code\Models\SystemHero.cs" />
+    <Compile Include="Source code\Models\SystemStatistics.cs" />
+    <Compile Include="Source code\Models\SystemTileset.cs" />
+    <Compile Include="Source code\Models\TilesetsDatas.cs" />
+    <Compile Include="Source code\Others\IntArrayComparer.cs" />
+    <Compile Include="Source code\Game\Map.cs" />
+    <Compile Include="Source code\Models\MapInfos.cs" />
+    <Compile Include="Source code\Game\Mountain.cs" />
+    <Compile Include="Source code\Game\Mountains.cs" />
+    <Compile Include="Source code\Game\MountainsGroup.cs" />
+    <Compile Include="Source code\Enums\Orientation.cs" />
+    <Compile Include="Source code\Enums\PassageKind.cs" />
+    <Compile Include="Source code\Game\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sprite.cs" />
-    <Compile Include="Sprites.cs" />
-    <Compile Include="SuperListItem.cs" />
-    <Compile Include="SystemAutotile.cs" />
-    <Compile Include="SystemColor.cs" />
-    <Compile Include="SystemDatas.cs" />
-    <Compile Include="SystemGraphic.cs" />
-    <Compile Include="SystemRelief.cs" />
-    <Compile Include="Tileset.cs" />
-    <Compile Include="TilesetPassage.cs" />
-    <Compile Include="Wanok.cs" />
+    <Compile Include="Source code\Game\Sprite.cs" />
+    <Compile Include="Source code\Game\Sprites.cs" />
+    <Compile Include="Source code\Others\NTree.cs" />
+    <Compile Include="Source code\Others\SuperListItem.cs" />
+    <Compile Include="Source code\Models\SystemAutotile.cs" />
+    <Compile Include="Source code\Models\SystemColor.cs" />
+    <Compile Include="Source code\Models\SystemDatas.cs" />
+    <Compile Include="Source code\Models\SystemGraphic.cs" />
+    <Compile Include="Source code\Models\SystemRelief.cs" />
+    <Compile Include="Source code\Models\TilesetPassage.cs" />
+    <Compile Include="Source code\Others\Wanok.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -153,6 +168,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Datas\BattleSystem.rpmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\Heroes.rpmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Datas\Maps\MAP0001\0-0.pmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -165,10 +186,16 @@
     <None Include="Content\Datas\Maps\MAP0001\1-1.pmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Datas\Maps\MAP0001\events.map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Datas\Maps\MAP0001\infos.map">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Datas\System.rpmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Datas\Tilesets.rpmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

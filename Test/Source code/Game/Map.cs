@@ -15,7 +15,9 @@ namespace Test
     {
         GraphicsDevice Device;
         public MapInfos MapInfos { get; set; }
+        public Events Events { get; set; }
         public Dictionary<int[], GameMapPortion> Portions;
+        public Dictionary<int[], EventsPortion> EventsPortions;
         public Orientation Orientation = Orientation.North; // Camera orientation
         public int[] CurrentPortion;
 
@@ -28,11 +30,14 @@ namespace Test
         {
             string pathDir = Path.Combine(WANOK.MapsDirectoryPath, mapName);
             if (!Directory.Exists(pathDir)) WANOK.PrintError("Error: could not find the " + mapName + " map directory.");
-            if (WANOK.SystemDatas.StartMapName == "") WANOK.PrintError("Error: could not find the start position.");
-            CurrentPortion = WANOK.GetPortion(WANOK.SystemDatas.StartPosition[0], WANOK.SystemDatas.StartPosition[3]);
+            if (WANOK.Game.System.StartMapName == "") WANOK.PrintError("Error: could not find the start position.");
+            CurrentPortion = WANOK.GetPortion(WANOK.Game.System.StartPosition[0], WANOK.Game.System.StartPosition[3]);
             Device = device;
-            MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(pathDir, "infos.map"));
-           
+            MapInfos = WANOK.LoadBinaryDatas<MapInfos>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "infos.map"));
+            if (MapInfos == null) WANOK.PrintError("infos.map version is not compatible.");
+            Events = WANOK.LoadBinaryDatas<Events>(Path.Combine(WANOK.MapsDirectoryPath, mapName, "events.map"));
+            if (Events == null) WANOK.PrintError("Events.rpm version is not compatible.");
+
 
             // Set textures
             if (Game1.TexTileset != null) Game1.TexTileset.Dispose();
@@ -46,18 +51,23 @@ namespace Test
                 Game1.TexReliefs[i].Dispose();
             }
             Game1.TexReliefs.Clear();
+            foreach (Texture2D texture in Game1.TexCharacters.Values)
+            {
+                texture.Dispose();
+            }
+            Game1.TexCharacters.Clear();
 
-
-            Tileset tileset = WANOK.SystemDatas.GetTilesetById(MapInfos.Tileset);
+            SystemTileset tileset = WANOK.Game.Tilesets.GetTilesetById(MapInfos.Tileset);
             Game1.TexTileset = tileset.Graphic.LoadTexture(device);
             for (int i = 0; i < tileset.Autotiles.Count; i++)
             {
-                Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.SystemDatas.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
+                Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.Game.Tilesets.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
             }
             for (int i = 0; i < tileset.Reliefs.Count; i++)
             {
-                Game1.TexReliefs[tileset.Reliefs[i]] = WANOK.SystemDatas.GetReliefById(tileset.Reliefs[i]).Graphic.LoadTexture(Device);
+                Game1.TexReliefs[tileset.Reliefs[i]] = WANOK.Game.Tilesets.GetReliefById(tileset.Reliefs[i]).Graphic.LoadTexture(Device);
             }
+            LoadEventTextures();
 
             // Load map
             LoadMap();
@@ -70,8 +80,9 @@ namespace Test
         public void LoadMap()
         {
             Portions = new Dictionary<int[], GameMapPortion>(new IntArrayComparer());
-            int k = (WANOK.SystemDatas.StartPosition[0] / WANOK.PORTION_SIZE);
-            int l = (WANOK.SystemDatas.StartPosition[3] / WANOK.PORTION_SIZE);
+            EventsPortions = new Dictionary<int[], EventsPortion>(new IntArrayComparer());
+            int k = (WANOK.Game.System.StartPosition[0] / WANOK.PORTION_SIZE);
+            int l = (WANOK.Game.System.StartPosition[3] / WANOK.PORTION_SIZE);
 
             for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
             {
@@ -83,32 +94,77 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // LoadEventSpriteTexture
+        // -------------------------------------------------------------------
+
+        public void LoadSpriteTexture(SystemGraphic graphic)
+        {
+            if (!graphic.IsTileset())
+            {
+                Game1.LoadSystemGraphic(graphic, Device);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LoadEventTextures
+        // -------------------------------------------------------------------
+
+        public void LoadEventTextures()
+        {
+            foreach (Dictionary<int[], SystemEvent> entry in Events.CompleteList.Values)
+            {
+                foreach (SystemEvent ev in entry.Values)
+                {
+                    for (int i = 0; i < ev.Pages.Count; i++)
+                    {
+                        switch (ev.Pages[i].GraphicDrawType)
+                        {
+                            case DrawType.None:
+                                break;
+                            case DrawType.Floors:
+                                break;
+                            case DrawType.Autotiles:
+                                break;
+                            case DrawType.FaceSprite:
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                break;
+                            case DrawType.FixSprite:
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                break;
+                            case DrawType.DoubleSprite:
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                break;
+                            case DrawType.QuadraSprite:
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                break;
+                            case DrawType.OnFloorSprite:
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                break;
+                            case DrawType.Montains:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
         // LoadPortion
         // -------------------------------------------------------------------
 
         public void LoadPortion(int real_i, int real_j, int i, int j)
         {
-            
-            string path = Path.Combine(WANOK.MapsDirectoryPath, MapInfos.RealMapName, real_i + "-" + real_j + ".pmap");
-
-            if (File.Exists(path))
+            int[] portion = new int[] { i, j };
+            int[] globalPortion = new int[] { real_i, real_j };
+            Portions[portion] = WANOK.LoadPortionMap(MapInfos.RealMapName, real_i, real_j);
+            EventsPortions[portion] = new EventsPortion(Events.CompleteList.ContainsKey(globalPortion) ? Events.CompleteList[globalPortion] : null);
+            if (Portions[portion] != null)
             {
-                GameMapPortion gamePortion;
-                try
-                {
-                    gamePortion = WANOK.LoadBinaryDatas<GameMapPortion>(path);
-                    Portions[new int[] { i, j }] = gamePortion;
-                    GenTextures(gamePortion);
-                }
-                catch
-                {
-                    WANOK.PrintError("Error: could not load the map portion " + real_i + "-" + real_j + ".pmap");
-                }
+                GenTextures(portion);
             }
-            else
-            {
-                Portions[new int[] { i, j }] = null;
-            }
+            GenEvent(portion, globalPortion);
         }
 
         // -------------------------------------------------------------------
@@ -119,16 +175,16 @@ namespace Test
         {
             if (Portions[portion] != null)
             {
-                GenTextures(Portions[portion]);
+                Portions[portion].GenFloor(Device, Game1.TexTileset);
+                Portions[portion].GenAutotiles(Device);
+                Portions[portion].GenSprites(Device);
+                Portions[portion].GenMountains(Device);
             }
         }
 
-        public void GenTextures(GameMapPortion portion)
+        public void GenEvent(int[] portion, int[] globalPortion)
         {
-            portion.GenFloor(Device, Game1.TexTileset);
-            portion.GenAutotiles(Device);
-            portion.GenSprites(Device);
-            portion.GenMountains(Device);
+            if (Events.CompleteList.ContainsKey(globalPortion)) EventsPortions[portion].GenEvents(Device, Events.CompleteList[globalPortion]);
         }
 
         // -------------------------------------------------------------------
@@ -229,13 +285,19 @@ namespace Test
         {
             Device.Clear(WANOK.GetColor(MapInfos.SkyColor));
 
-            foreach (GameMapPortion gameMap in Portions.Values)
+            for (int i = -WANOK.PORTION_RADIUS; i <= WANOK.PORTION_RADIUS; i++)
             {
-                if (gameMap != null)
+                for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
                 {
+                    int[] portion = new int[] { i, j };
 
+                    // map portion
+                    GameMapPortion gameMap = Portions[portion];
+                    if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
+
+                    // events
+                    EventsPortions[portion].DrawSprites(Device, effect, camera);
                 }
-                if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
             }
         }
 

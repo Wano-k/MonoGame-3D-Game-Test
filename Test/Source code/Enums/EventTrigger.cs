@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace RPG_Paper_Maker
 {
-    public enum GraphicKind
+    public enum EventTrigger
     {
-        Picture,
-        Tileset,
-        Autotile,
-        Relief
+        ActionButton,
+        PlayerTouch,
+        EventTouch,
+        Detection,
+        Autorun,
+        ParallelProcess
     }
 }
