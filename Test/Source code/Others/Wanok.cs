@@ -209,5 +209,33 @@ namespace Test
 
             return dic;
         }
+
+        // -------------------------------------------------------------------
+        // GetVector3Position
+        // -------------------------------------------------------------------
+
+        public static Vector3 GetVector3Position(int[] coords)
+        {
+            return new Vector3(coords[0] * SQUARE_SIZE, GetCoordsPixelHeight(coords), coords[3] * SQUARE_SIZE);
+        }
+
+        // -------------------------------------------------------------------
+        // GetPixelHeight
+        // -------------------------------------------------------------------
+
+        public static int GetPixelHeight(int[] height)
+        {
+            return GetPixelHeight(height[0], height[1]);
+        }
+
+        public static int GetCoordsPixelHeight(int[] coords)
+        {
+            return GetPixelHeight(coords[1], coords[2]);
+        }
+
+        public static int GetPixelHeight(int y, int yPlus)
+        {
+            return (y * SQUARE_SIZE) + yPlus;
+        }
     }
 }

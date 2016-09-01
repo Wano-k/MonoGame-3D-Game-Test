@@ -97,11 +97,12 @@ namespace Test
         // LoadEventSpriteTexture
         // -------------------------------------------------------------------
 
-        public void LoadSpriteTexture(SystemGraphic graphic)
+        public void LoadSpriteTexture(SystemGraphic graphic, SystemGraphic graphicAct)
         {
             if (!graphic.IsTileset())
             {
                 Game1.LoadSystemGraphic(graphic, Device);
+                if (graphicAct != null) Game1.LoadSystemGraphic(graphicAct, Device);
             }
         }
 
@@ -126,19 +127,19 @@ namespace Test
                             case DrawType.Autotiles:
                                 break;
                             case DrawType.FaceSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
                                 break;
                             case DrawType.FixSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
                                 break;
                             case DrawType.DoubleSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
                                 break;
                             case DrawType.QuadraSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
                                 break;
                             case DrawType.OnFloorSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic);
+                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
                                 break;
                             case DrawType.Montains:
                                 break;
@@ -265,6 +266,7 @@ namespace Test
         {
             DisposeBuffers(new int[] { i, j }, false);
             Portions[new int[] { i, j }] = Portions[new int[] { k, l }];
+            EventsPortions[new int[] { i, j }] = EventsPortions[new int[] { k, l }];
         }
 
         // -------------------------------------------------------------------
@@ -290,13 +292,15 @@ namespace Test
                 for (int j = -WANOK.PORTION_RADIUS; j <= WANOK.PORTION_RADIUS; j++)
                 {
                     int[] portion = new int[] { i, j };
+                    int[] globalPortion = new int[] { i + CurrentPortion[0], j + CurrentPortion[1] };
 
                     // map portion
                     GameMapPortion gameMap = Portions[portion];
                     if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
 
                     // events
-                    EventsPortions[portion].DrawSprites(Device, effect, camera);
+                    if (Events.CompleteList.ContainsKey(globalPortion))
+                        EventsPortions[portion].DrawSprites(Device, effect, camera, Orientation, Events.CompleteList[globalPortion]);
                 }
             }
         }
@@ -311,6 +315,7 @@ namespace Test
             {
                 Portions[portion].DisposeBuffers(Device, nullable);
             }
+            EventsPortions[portion].DisposeBuffers(Device, nullable);
         }
 
         // -------------------------------------------------------------------
@@ -319,9 +324,9 @@ namespace Test
 
         public void DisposeVertexBuffer()
         {
-            foreach (KeyValuePair<int[], GameMapPortion> entry in Portions)
+            foreach (int[] coords in Portions.Keys)
             {
-                if (entry.Value != null) DisposeBuffers(entry.Key);
+                DisposeBuffers(coords);
             }
         }
     }

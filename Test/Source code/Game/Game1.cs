@@ -21,7 +21,9 @@ namespace Test
         Hero Hero;
 
         // Content
-        public static Texture2D TexTileset, TexNone, TexHero, TexHeroAct;
+        public SystemGraphic HeroGraphic = new SystemGraphic("lucas.png", true, GraphicKind.Character, new object[] { 0, 0, 1, 1, 4, 0, 0 });
+        public SystemGraphic HeroActGraphic = new SystemGraphic("lucas_act.png", true, GraphicKind.Character, new object[] { 0, 0, 1, 1, 4, 0, 0 });
+        public static Texture2D TexTileset, TexNone;
         public static Dictionary<int, Texture2D> TexAutotiles = new Dictionary<int, Texture2D>();
         public static Dictionary<int, Texture2D> TexReliefs = new Dictionary<int, Texture2D>();
         public static Dictionary<SystemGraphic, Texture2D> TexCharacters = new Dictionary<SystemGraphic, Texture2D>();
@@ -73,25 +75,14 @@ namespace Test
 
             // Textures loading
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            FileStream fs;
-            fs = new FileStream(Path.Combine(WANOK.Game.System.PathRTP, "Content", "Pictures", "Textures2D", "Characters", "lucas.png"), FileMode.Open);
-            TexHero = Texture2D.FromStream(GraphicsDevice, fs);
-            fs.Close();
-            fs = new FileStream(Path.Combine(WANOK.Game.System.PathRTP, "Content", "Pictures", "Textures2D","Characters", "lucas_act.png"), FileMode.Open);
-            TexHeroAct = Texture2D.FromStream(GraphicsDevice, fs);
-            fs.Close();
             TexNone = new Texture2D(GraphicsDevice, 1, 1);
             font = Content.Load<SpriteFont>("Fonts/corbel");
 
-            /*
-            string heroPath = WANOK.GetTilesetTexturePath(Map.MapInfos.Tileset);
-            fs = new FileStream(heroPath, FileMode.Open);
-            currentFloorTex = Texture2D.FromStream(GraphicsDevice, fs);
-            fs = new FileStream(Path.Combine(Path.GetDirectoryName(heroPath), Path.GetFileNameWithoutExtension(heroPath) + "_act" + Path.GetExtension(heroPath)), FileMode.Open);
-            */
 
             Map = new Map(GraphicsDevice, WANOK.Game.System.StartMapName);
-            Hero = new Hero(GraphicsDevice, new Vector3(WANOK.Game.System.StartPosition[0]*WANOK.SQUARE_SIZE, WANOK.Game.System.StartPosition[1] * WANOK.SQUARE_SIZE + WANOK.Game.System.StartPosition[2], WANOK.Game.System.StartPosition[3] * WANOK.SQUARE_SIZE));
+            LoadSystemGraphic(HeroGraphic, GraphicsDevice);
+            LoadSystemGraphic(HeroActGraphic, GraphicsDevice);
+            Hero = new Hero(GraphicsDevice, WANOK.GetVector3Position(WANOK.Game.System.StartPosition), TexCharacters[HeroGraphic]);
         }
 
         // -------------------------------------------------------------------
@@ -182,7 +173,7 @@ namespace Test
 
             // Drawing map + hero
             Map.Draw(gameTime, effect, Camera);
-            Hero.Draw(gameTime, Camera, effect, Map.Orientation);
+            Hero.Draw(GraphicsDevice, Camera, effect, Map.Orientation, HeroGraphic, HeroActGraphic);
 
             // Interface
             /*

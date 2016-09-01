@@ -60,6 +60,7 @@
     <Compile Include="Source code\Game\Autotile.cs" />
     <Compile Include="Source code\Game\Autotiles.cs" />
     <Compile Include="Source code\Game\Camera.cs" />
+    <Compile Include="Source code\Game\EventSprite.cs" />
     <Compile Include="Source code\Models\Events.cs" />
     <Compile Include="Source code\Game\EventsPortion.cs" />
     <Compile Include="Source code\Models\BattleSystemDatas.cs" />

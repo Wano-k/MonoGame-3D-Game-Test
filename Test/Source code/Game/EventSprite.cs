@@ -5,80 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Test;
+using RPG_Paper_Maker;
 
-namespace RPG_Paper_Maker
+namespace Test
 {
-    [Serializable]
-    class Sprites
+    class EventSprite : Event
     {
-        public Dictionary<int[], Sprite> ListSprites; // Coords => sprite
+        public Sprite Sprite;
+        public int[] InitialTexture;
 
-        [NonSerialized()]
         VertexBuffer VB;
-        [NonSerialized()]
         VertexPositionTexture[] VerticesArray;
-        [NonSerialized()]
         IndexBuffer IB;
-        [NonSerialized()]
         int[] IndexesArray;
-
 
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
 
-        public Sprites()
+        public EventSprite(Vector3 position, Vector2 size, Sprite sprite, int[] initialTexture) : base(position, size)
         {
-            ListSprites = new Dictionary<int[], Sprite>(new IntArrayComparer());
-        }
-
-        // -------------------------------------------------------------------
-        // IsEmpty
-        // -------------------------------------------------------------------
-
-        public bool IsEmpty()
-        {
-            return ListSprites.Count == 0;
-        }
-
-        // -------------------------------------------------------------------
-        // ContainsCoords
-        // -------------------------------------------------------------------
-
-        public Sprite ContainsCoords(int[] coords)
-        {
-            if (ListSprites.ContainsKey(coords)) return ListSprites[coords];
-
-            return null;
-        }
-
-        // -------------------------------------------------------------------
-        // Add
-        // -------------------------------------------------------------------
-
-        public void Add(int[] coords, Sprite sprite)
-        {
-            ListSprites[coords] = sprite;
-        }
-
-        // -------------------------------------------------------------------
-        // Remove
-        // -------------------------------------------------------------------
-
-        public void Remove(int[] coords)
-        {
-            ListSprites.Remove(coords);
-        }
-
-        // -------------------------------------------------------------------
-        // GenSprites
-        // -------------------------------------------------------------------
-
-        public void GenSprites(GraphicsDevice device, Texture2D texture2D, int[] texture, bool isTileset = true)
-        {
-            DisposeBuffers(device);
-            CreatePortion(device, texture2D, texture, isTileset);
+            Sprite = sprite;
+            InitialTexture = initialTexture;
         }
 
         // -------------------------------------------------------------------
@@ -87,8 +35,10 @@ namespace RPG_Paper_Maker
 
         public void CreatePortion(GraphicsDevice device, Texture2D texture2D, int[] texture, bool isTileset)
         {
+            DisposeBuffers(device);
+
             // Building vertex buffer indexed
-            List<VertexPositionTexture> verticesList = new List<VertexPositionTexture>();
+            List <VertexPositionTexture> verticesList = new List<VertexPositionTexture>();
             List<int> indexesList = new List<int>();
             int[] indexes = new int[]
             {
@@ -157,19 +107,35 @@ namespace RPG_Paper_Maker
         // Draw
         // -------------------------------------------------------------------
 
-        public void Draw(GraphicsDevice device, AlphaTestEffect effect, Camera camera, int width, int height, SystemGraphic characterGraphic = null)
+        public void Draw(GraphicsDevice device, Camera camera, AlphaTestEffect effect, Orientation orientationMap, SystemGraphic characterGraphic, SystemGraphic characterGraphicAct)
         {
-            if (VB != null)
+            Vector3 position;
+            int bounce = (Frame == 0 || Frame == 2) ? 0 : 1;
+
+            if (characterGraphic == null)
             {
-                if (characterGraphic == null) effect.Texture = Game1.TexTileset;
-                else effect.Texture = Game1.TexCharacters[characterGraphic];
-                device.SetVertexBuffer(VB);
-                device.Indices = IB;
-                foreach (int[] coords in ListSprites.Keys)
+                effect.Texture = Game1.TexTileset;
+                position = Act ? Position : new Vector3(Position.X, Position.Y + bounce, Position.Z);
+            }
+            else
+            {
+                int orientation = WANOK.Mod(((int)orientationMap - 2) * 3 + (int)OrientationEye, 4);
+
+                if (Act)
                 {
-                    ListSprites[coords].Draw(device, effect, VerticesArray, IndexesArray, camera, WANOK.GetVector3Position(coords), width, height);
+                    effect.Texture = characterGraphicAct == null ? Game1.TexCharacters[characterGraphic] : Game1.TexCharacters[characterGraphicAct];
+                    CreatePortion(device, effect.Texture, new int[] { FrameInactive * 32, orientation * 32, (int)Size.X, (int)Size.Y }, false);
+                    position = Position;
+                }
+                else
+                {
+                    effect.Texture = Game1.TexCharacters[characterGraphic];
+                    CreatePortion(device, effect.Texture, new int[] { Frame * 32, orientation * 32, (int)Size.X, (int)Size.Y }, false);
+                    position = new Vector3(Position.X, Position.Y + bounce, Position.Z);
                 }
             }
+
+            Sprite.Draw(device, effect, VerticesArray, IndexesArray, camera, position, (int)Size.X, (int)Size.Y);
         }
 
         // -------------------------------------------------------------------

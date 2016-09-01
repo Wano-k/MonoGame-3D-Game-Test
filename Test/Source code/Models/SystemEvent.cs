@@ -34,7 +34,7 @@ namespace RPG_Paper_Maker
             public class PageOptions
             {
                 public bool MoveAnimation;
-                public bool StopAnimation;
+                public SystemGraphic StopAnimation;
                 public bool DirectionFix;
                 public bool Through;
                 public bool SetWithCamera;
@@ -69,6 +69,15 @@ namespace RPG_Paper_Maker
         public SystemEvent CreateCopy()
         {
             return new SystemEvent();
+        }
+
+        // -------------------------------------------------------------------
+        // GetCurrentPage
+        // -------------------------------------------------------------------
+
+        public SystemEventPage GetCurrentPage()
+        {
+            return Pages[CurrentPage];
         }
     }
 }

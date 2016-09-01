@@ -15,7 +15,7 @@ namespace Test
                 }
             } catch(Exception e)
             {
-                WANOK.PrintError(e.Message);
+                WANOK.PrintError(e.Message + "\n" + e.StackTrace);
             }
         }
     }

@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Test
 {
-    class Hero : Event
+    class Hero : EventSprite
     {
 
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
 
-        public Hero(GraphicsDevice device, Vector3 position) : base(device, position, new Vector2(32, 32))
+        public Hero(GraphicsDevice device, Vector3 position, Texture2D texture) : base(position, new Vector2(32, 32), new Sprite(DrawType.FaceSprite, new int[] { 0, 0 }, 0), new int[] { 0, 0, 16, 16 })
         {
-
+            CreatePortion(device, texture, new int[] { 0, 0, 16, 16 }, false);
         }
 
         // -------------------------------------------------------------------
@@ -48,8 +48,8 @@ namespace Test
             {
                 x_plus = (float)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
                 z_plus = (float)(speed * (Math.Sin((angle - 90.0) * Math.PI / 180.0)));
-                if ((x > 0 && x_plus < 0) || (x < map.MapInfos.Width - 1 && x_plus > 0)) Position.X += x_plus;
-                if (((int)x_plus) == 0 && ((z > 0 && z_plus < 0) || (z < map.MapInfos.Height - 1 && z_plus > 0))) Position.Z += z_plus;
+                if ((Position.X > 0 && x_plus < 0) || (Position.X < (map.MapInfos.Width - 1) * WANOK.SQUARE_SIZE && x_plus > 0)) Position.X += x_plus;
+                if (((int)x_plus) == 0 && ((Position.Z > 0 && z_plus < 0) || (Position.Z < (map.MapInfos.Height - 1) * WANOK.SQUARE_SIZE && z_plus > 0))) Position.Z += z_plus;
                 isAKeyDown = true;
                 OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) - 1, 4);
             }
@@ -57,8 +57,8 @@ namespace Test
             {
                 x_plus = (float)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
                 z_plus = (float)(speed * (Math.Sin((angle - 90.0) * Math.PI / 180.0)));
-                if ((x < map.MapInfos.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0)) Position.X -= x_plus;
-                if (((int)x_plus) == 0 && ((z < map.MapInfos.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0))) Position.Z -= z_plus;
+                if ((Position.X < (map.MapInfos.Width - 1) * WANOK.SQUARE_SIZE && x_plus < 0) || (Position.X > 0 && x_plus > 0)) Position.X -= x_plus;
+                if (((int)x_plus) == 0 && ((Position.Z < (map.MapInfos.Height - 1) * WANOK.SQUARE_SIZE && z_plus < 0) || (Position.Z > 0 && z_plus > 0))) Position.Z -= z_plus;
                 isAKeyDown = true;
                 OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) + 1, 4);
             }
@@ -66,8 +66,8 @@ namespace Test
             {
                 x_plus = (float)(speed * (Math.Cos(angle * Math.PI / 180.0)));
                 z_plus = (float)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z > 0 && z_plus < 0) || (z < map.MapInfos.Height - 1 && z_plus > 0)) Position.Z += z_plus;
-                if (((int)z_plus) == 0 && ((x > 0 && x_plus < 0) || (x < map.MapInfos.Width - 1 && x_plus > 0))) Position.X += x_plus;
+                if ((Position.Z > 0 && z_plus < 0) || (Position.Z < (map.MapInfos.Height - 1) * WANOK.SQUARE_SIZE && z_plus > 0)) Position.Z += z_plus;
+                if (((int)z_plus) == 0 && ((Position.X > 0 && x_plus < 0) || (Position.X < (map.MapInfos.Width - 1) * WANOK.SQUARE_SIZE && x_plus > 0))) Position.X += x_plus;
                 isAKeyDown = true;
                 OrientationEye = map.Orientation;
             }
@@ -75,8 +75,8 @@ namespace Test
             {
                 x_plus = (float)(speed * (Math.Cos(angle * Math.PI / 180.0)));
                 z_plus = (float)(speed * (Math.Sin(angle * Math.PI / 180.0)));
-                if ((z < map.MapInfos.Height - 1 && z_plus < 0) || (z > 0 && z_plus > 0)) Position.Z -= z_plus;
-                if (((int)z_plus) == 0 && ((x < map.MapInfos.Width - 1 && x_plus < 0) || (x > 0 && x_plus > 0))) Position.X -= x_plus;
+                if ((Position.Z < (map.MapInfos.Height - 1) * WANOK.SQUARE_SIZE && z_plus < 0) || (Position.Z > 0 && z_plus > 0)) Position.Z -= z_plus;
+                if (((int)z_plus) == 0 && ((Position.X < (map.MapInfos.Width - 1) * WANOK.SQUARE_SIZE && x_plus < 0) || (Position.X > 0 && x_plus > 0))) Position.X -= x_plus;
                 isAKeyDown = true;
                 OrientationEye = (Orientation)WANOK.Mod(((int)map.Orientation) + 2, 4);
             }
