@@ -9,7 +9,7 @@ namespace RPG_Paper_Maker
     [Serializable]
     public class Autotile
     {
-        public int[] Tiles = new int[4];
+        public int TilesId;
     }
 }
 

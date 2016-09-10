@@ -61,7 +61,7 @@ namespace Test
             Game1.TexTileset = tileset.Graphic.LoadTexture(device);
             for (int i = 0; i < tileset.Autotiles.Count; i++)
             {
-                Game1.TexAutotiles[tileset.Autotiles[i]] = WANOK.Game.Tilesets.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device);
+                Game1.TexAutotiles[tileset.Autotiles[i]] = Game1.GetAutotileTexture(device, WANOK.Game.Tilesets.GetAutotileById(tileset.Autotiles[i]).Graphic.LoadTexture(Device));
             }
             for (int i = 0; i < tileset.Reliefs.Count; i++)
             {
@@ -97,12 +97,11 @@ namespace Test
         // LoadEventSpriteTexture
         // -------------------------------------------------------------------
 
-        public void LoadSpriteTexture(SystemGraphic graphic, SystemGraphic graphicAct)
+        public void LoadSpriteTexture(SystemGraphic graphic)
         {
             if (!graphic.IsTileset())
             {
                 Game1.LoadSystemGraphic(graphic, Device);
-                if (graphicAct != null) Game1.LoadSystemGraphic(graphicAct, Device);
             }
         }
 
@@ -127,19 +126,19 @@ namespace Test
                             case DrawType.Autotiles:
                                 break;
                             case DrawType.FaceSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
                                 break;
                             case DrawType.FixSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
                                 break;
                             case DrawType.DoubleSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
                                 break;
                             case DrawType.QuadraSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
                                 break;
                             case DrawType.OnFloorSprite:
-                                LoadSpriteTexture(ev.Pages[i].Graphic, ev.Pages[i].Options.StopAnimation);
+                                LoadSpriteTexture(ev.Pages[i].Graphic);
                                 break;
                             case DrawType.Montains:
                                 break;
@@ -200,6 +199,44 @@ namespace Test
                 UpdateMovingPortion(newPortion, CurrentPortion);
             }
             CurrentPortion = newPortion;
+
+            // Update event current page
+            foreach (KeyValuePair<int[], Dictionary<int[], SystemEvent>> entry in Events.CompleteList)
+            {
+                bool portionDrawn = EventsPortions.ContainsKey(entry.Key);
+                foreach (KeyValuePair<int[], SystemEvent> entry2 in entry.Value)
+                {
+                    int previousPage = entry2.Value.CurrentPage;
+                    entry2.Value.CurrentPage = -1;
+                    for (int i = entry2.Value.Pages.Count - 1; i >= 0; i--)
+                    {
+                        if (Condition.ToBoolMultiples(entry2.Value.Pages[i].ConditionsTree.Tree))
+                        {
+                            entry2.Value.CurrentPage = i;
+                            break;
+                        }
+                    }
+                    var lol = entry2.Value.CurrentPage;
+                    if (portionDrawn && previousPage != entry2.Value.CurrentPage)
+                    {
+                        if (previousPage == -1)
+                        {
+                            EventsPortions[entry.Key].AddSprite(entry2.Key, entry2.Value);
+                            EventsPortions[entry.Key].GenEvent(Device, entry2.Key, entry2.Value);
+                        }
+                        else if (entry2.Value.CurrentPage == -1)
+                        {
+                            EventsPortions[entry.Key].RemoveSprite(Device, entry2.Key);
+                        }
+                        else
+                        {
+                            EventsPortions[entry.Key].RemoveSprite(Device, entry2.Key);
+                            EventsPortions[entry.Key].AddSprite(entry2.Key, entry2.Value);
+                            EventsPortions[entry.Key].GenEvent(Device, entry2.Key, entry2.Value);
+                        }
+                    }
+                }
+            }
         }
 
         // -------------------------------------------------------------------
@@ -299,8 +336,7 @@ namespace Test
                     if (gameMap != null) gameMap.Draw(Device, effect, Game1.TexTileset, camera);
 
                     // events
-                    if (Events.CompleteList.ContainsKey(globalPortion))
-                        EventsPortions[portion].DrawSprites(Device, effect, camera, Orientation, Events.CompleteList[globalPortion]);
+                    if (Events.CompleteList.ContainsKey(globalPortion)) EventsPortions[portion].DrawSprites(Device, effect, camera, Orientation, Events.CompleteList[globalPortion]);
                 }
             }
         }

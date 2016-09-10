@@ -87,24 +87,23 @@ namespace Test
             {
                 if (kb.IsKeyDown(Keys.Left))
                 {
-                    //map.Orientation = (Orientation)(((int)map.Orientation - 1) % 4);
-                    //if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye - 1) % 4);
                     TargetAngle -= RotateSteps;
                 }
                 else if (kb.IsKeyDown(Keys.Right))
                 {
-                    //map.Orientation = (Orientation)(((int)map.Orientation + 1) % 4);
-                    //if (kb.IsKeyDown(Keys.W) || kb.IsKeyDown(Keys.S) || kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.D)) hero.OrientationEye = (Orientation)(((int)hero.OrientationEye + 1) % 4);
                     TargetAngle += RotateSteps;
                 }
             }
 
+            System.Diagnostics.Debug.Write(Target.X + " - " + hero.GetCenterX() + "\n");
+
             // Updating camera according to hero position
-            Target.X = hero.Position.X;
+            Target.X = hero.GetCenterX();
             Target.Y = hero.Position.Y;
-            Target.Z = hero.Position.Z;
+            Target.Z = hero.GetCenterZ();
 
             // Camera position
+
             Position.X = Target.X - (float)(Distance * Math.Cos(HorizontalAngle * Math.PI / 180.0));
             Position.Y = Target.Y - (float)(Distance * Math.Sin(VerticalAngle * Math.PI / 180.0)) + (float)Height;
             Position.Z = Target.Z - (float)(Distance * Math.Sin(HorizontalAngle * Math.PI / 180.0));

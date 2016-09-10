@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using RPG_Paper_Maker;
 using System;
@@ -236,6 +237,46 @@ namespace Test
         public static int GetPixelHeight(int y, int yPlus)
         {
             return (y * SQUARE_SIZE) + yPlus;
+        }
+
+        // -------------------------------------------------------------------
+        // GetImageData
+        // -------------------------------------------------------------------
+
+        public static Color[] GetImageData(Color[] colorData, int width, Rectangle rectangle)
+        {
+            Color[] color = new Color[rectangle.Width * rectangle.Height];
+            for (int x = 0; x < rectangle.Width; x++)
+                for (int y = 0; y < rectangle.Height; y++)
+                    color[x + y * rectangle.Width] = colorData[x + rectangle.X + (y + rectangle.Y) * width];
+            return color;
+        }
+
+        // -------------------------------------------------------------------
+        // GetSubImage
+        // -------------------------------------------------------------------
+
+        public static Texture2D GetSubImage(GraphicsDevice GraphicsDevice, Texture2D image, Rectangle rectangle)
+        {
+            Color[] imageData = new Color[image.Width * image.Height];
+            image.GetData(imageData);
+            Color[] imagePiece = GetImageData(imageData, image.Width, rectangle);
+            Texture2D subtexture = new Texture2D(GraphicsDevice, rectangle.Width, rectangle.Height);
+            subtexture.SetData(imagePiece);
+
+            return subtexture;
+        }
+
+        // -------------------------------------------------------------------
+        // FillImage
+        // -------------------------------------------------------------------
+
+        public static Texture2D FillImage(GraphicsDevice device, Texture2D texture, Color[] imageDataToCopy, int width, Rectangle rectangle, Rectangle rectangleToCopy)
+        {
+            Color[] imageDataSub = GetImageData(imageDataToCopy, width, rectangleToCopy);
+            texture.SetData(0, rectangle, imageDataSub, 0, imageDataSub.Length);
+
+            return texture;
         }
     }
 }

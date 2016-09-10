@@ -165,16 +165,15 @@ namespace RPG_Paper_Maker
 
         public void Draw(GraphicsDevice device, AlphaTestEffect effect, Texture2D texture, Camera camera)
         {
-            // Drawing Sprites & montains
+            // Drawing mountains
             effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
             foreach (Mountains mountains in Mountains.Values)
             {
                 mountains.Draw(device, effect);
             }
 
-            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
-
             // Drawing Floors
+            effect.World = Matrix.Identity * Matrix.CreateScale(WANOK.SQUARE_SIZE, 1.0f, WANOK.SQUARE_SIZE);
             if (VBFloor != null)
             {
                 effect.Texture = texture;
@@ -196,7 +195,7 @@ namespace RPG_Paper_Maker
 
             foreach (KeyValuePair<int[], Sprites> entry in Sprites)
             {
-                entry.Value.Draw(device, effect, camera, entry.Key[2], entry.Key[3]);
+                entry.Value.Draw(device, effect, camera, entry.Key[2] * WANOK.SQUARE_SIZE, entry.Key[3] * WANOK.SQUARE_SIZE);
             }
         }
 

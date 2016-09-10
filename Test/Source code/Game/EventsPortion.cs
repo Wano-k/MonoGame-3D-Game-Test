@@ -30,13 +30,23 @@ namespace Test
         }
 
         // -------------------------------------------------------------------
+        // IsEmpty
+        // -------------------------------------------------------------------
+
+        public bool IsEmpty()
+        {
+            return (Sprites.Count == 0);
+        }
+
+        // -------------------------------------------------------------------
         // AddSprite
         // -------------------------------------------------------------------
 
         public void AddSprite(int[] coords, SystemEvent ev)
         {
             int[] texture;
-            if (ev.Pages[0].Graphic.IsTileset())
+            int frames = 1;
+            if (ev.GetCurrentPage().Graphic.IsTileset())
             {
                 texture = new int[] { (int)ev.Pages[0].Graphic.Options[(int)SystemGraphic.OptionsEnum.TilesetX],
                                             (int)ev.Pages[0].Graphic.Options[(int)SystemGraphic.OptionsEnum.TilesetY],
@@ -45,23 +55,24 @@ namespace Test
             }
             else
             {
-                int frames = (int)ev.Pages[0].Graphic.Options[(int)SystemGraphic.OptionsEnum.Frames];
-                int index = (int)ev.Pages[0].Graphic.Options[(int)SystemGraphic.OptionsEnum.Index];
-                int width = Game1.TexCharacters[ev.Pages[0].Graphic].Width / frames;
-                int height = Game1.TexCharacters[ev.Pages[0].Graphic].Height / frames;
+                frames = (int)ev.GetCurrentPage().Graphic.Options[(int)SystemGraphic.OptionsEnum.Frames];
+                int index = (int)ev.GetCurrentPage().Graphic.Options[(int)SystemGraphic.OptionsEnum.Index];
+                int width = Game1.TexCharacters[ev.GetCurrentPage().Graphic].Width / 2 / frames;
+                int height = Game1.TexCharacters[ev.Pages[0].Graphic].Height / ((int)ev.GetCurrentPage().Graphic.Options[(int)SystemGraphic.OptionsEnum.Diagonal] == 0 ? 4 : 8);
                 texture = new int[] { (index % frames) * width, (index / frames) * height, width, height };
             }
 
-            Sprites[coords] = new EventSprite(WANOK.GetVector3Position(coords), new Vector2(texture[2], texture[3]), new Sprite(ev.Pages[0].GraphicDrawType, new int[] { 0, 0 }, 0), texture);
+            Sprites[coords] = new EventSprite(WANOK.GetVector3Position(coords), new Vector2(texture[2], 16), frames, new Sprite(ev.GetCurrentPage().GraphicDrawType, new int[] { 0, 0 }, 0), texture);
         }
 
         // -------------------------------------------------------------------
         // RemoveSprite
         // -------------------------------------------------------------------
 
-        public void RemoveSprite(int[] coords)
+        public void RemoveSprite(GraphicsDevice device, int[] coords)
         {
-            
+            Sprites[coords].DisposeBuffers(device);
+            Sprites.Remove(coords);
         }
 
         // -------------------------------------------------------------------
@@ -72,13 +83,17 @@ namespace Test
         {
             if (Sprites.Count > 0)
             {
-                foreach (KeyValuePair<int[], EventSprite> entry in Sprites)
+                foreach (int[] coords in Sprites.Keys)
                 {
-                    entry.Value.CreatePortion(device, dictionary[entry.Key].GetCurrentPage().Graphic.IsTileset() ? Game1.TexTileset : Game1.TexCharacters[dictionary[entry.Key].GetCurrentPage().Graphic], entry.Value.InitialTexture, dictionary[entry.Key].GetCurrentPage().Graphic.IsTileset());
+                    GenEvent(device, coords, dictionary[coords]);
                 }
             }
         }
 
+        public void GenEvent(GraphicsDevice device, int[] coords, SystemEvent ev)
+        {
+            Sprites[coords].CreatePortion(device, ev.GetCurrentPage().Graphic.IsTileset() ? Game1.TexTileset : Game1.TexCharacters[ev.GetCurrentPage().Graphic], ev.GetCurrentPage().Graphic.IsTileset());
+        }
 
         // -------------------------------------------------------------------
         // DrawSprites
@@ -88,7 +103,7 @@ namespace Test
         {
             foreach (KeyValuePair<int[], EventSprite> entry in Sprites)
             {
-                entry.Value.Draw(device, camera, effect, orientationMap, events[entry.Key].GetCurrentPage().Graphic.IsTileset() ? null : events[entry.Key].GetCurrentPage().Graphic, events[entry.Key].GetCurrentPage().Options.StopAnimation);
+                entry.Value.Draw(device, camera, effect, orientationMap, events[entry.Key].GetCurrentPage().Graphic.IsTileset() ? null : events[entry.Key].GetCurrentPage().Graphic);
             }
         }
 

@@ -14,6 +14,33 @@ namespace RPG_Paper_Maker
     {
         public int Id;
         public Dictionary<int[], Autotile> Tiles = new Dictionary<int[], Autotile>(new IntArrayComparer());
+        public static Dictionary<string, int> AutotileBorder = new Dictionary<string, int>{
+            { "A1", 2 },
+            { "B1", 3 },
+            { "C1", 6 },
+            { "D1", 7 },
+            { "A2", 8 },
+            { "B4", 9 },
+            { "A4", 10 },
+            { "B2", 11 },
+            { "C5", 12 },
+            { "D3", 13 },
+            { "C3", 14 },
+            { "D5", 15 },
+            { "A5", 16 },
+            { "B3", 17 },
+            { "A3", 18 },
+            { "B5", 19 },
+            { "C2", 20 },
+            { "D4", 21 },
+            { "C4", 22 },
+            { "D2", 23 },
+        };
+        public static string[] listA = new string[] { "A1", "A2", "A3", "A4", "A5" };
+        public static string[] listB = new string[] { "B1", "B2", "B3", "B4", "B5" };
+        public static string[] listC = new string[] { "C1", "C2", "C3", "C4", "C5" };
+        public static string[] listD = new string[] { "D1", "D2", "D3", "D4", "D5" };
+
 
         [NonSerialized()]
         VertexBuffer VB;
@@ -54,26 +81,23 @@ namespace RPG_Paper_Maker
             List<int> indexesList = new List<int>();
             int[] indexes = new int[]
             {
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
+                0, 1, 2, 0, 2, 3
             };
             int offset = 0;
 
-            if (Game1.TexAutotiles.ContainsKey(Id) && Game1.TexAutotiles[Id].Width == (2 * WANOK.SQUARE_SIZE) && Game1.TexAutotiles[Id].Height == (3 * WANOK.SQUARE_SIZE))
+            if (Game1.TexAutotiles.ContainsKey(Id))
             {
                 foreach (KeyValuePair<int[], Autotile> entry in Tiles)
                 {
-                    foreach (VertexPositionTexture vertex in CreateTex(Game1.TexAutotiles[Id], entry.Key, entry.Value))
+                    foreach (VertexPositionTexture vertex in CreateTex(entry.Key, entry.Value))
                     {
                         verticesList.Add(vertex);
                     }
-                    for (int n = 0; n < 24; n++)
+                    for (int n = 0; n < 6; n++)
                     {
                         indexesList.Add(indexes[n] + offset);
                     }
-                    offset += 16;
+                    offset += 4;
                 }
 
                 VerticesArray = verticesList.ToArray();
@@ -89,46 +113,27 @@ namespace RPG_Paper_Maker
         // CreateTex
         // -------------------------------------------------------------------
 
-        protected VertexPositionTexture[] CreateTex(Texture2D texture, int[] coords, Autotile autotile)
+        protected VertexPositionTexture[] CreateTex(int[] coords, Autotile autotile)
         {
-            VertexPositionTexture[] res = new VertexPositionTexture[16];
-
             int x = coords[0], y = coords[1] * WANOK.SQUARE_SIZE + coords[2], z = coords[3];
-            float[] left = new float[4], top = new float[4], bot = new float[4], right = new float[4];
-            float[] leftPos = new float[4], topPos = new float[4], botPos = new float[4], rightPos = new float[4];
 
-            for (int i = 0; i < 4; i++)
+            int xTile = autotile.TilesId % 125;
+            int yTile = autotile.TilesId / 125;
+
+            // Texture coords
+            float left = xTile / 125.0f;
+            float top = yTile / 5.0f;
+            float bot = (yTile + 1) / 5.0f;
+            float right = (xTile + 1) / 125.0f;
+
+            // Vertex Position and Texture
+            return new VertexPositionTexture[]
             {
-                int xTile = autotile.Tiles[i] % 4;
-                int yTile = autotile.Tiles[i] / 4;
-                float pos = i < 2 ? 0.0f : 0.5f;
-
-                // Texture coords
-                leftPos[i] = (float)(i % 2) / 2;
-                topPos[i] = pos;
-                botPos[i] = pos + 0.5f;
-                rightPos[i] = leftPos[i] + 0.5f;
-                left[i] = (xTile + leftPos[i]) * (WANOK.SQUARE_SIZE / 2) / texture.Width;
-                top[i] = (yTile + topPos[i]) * (WANOK.SQUARE_SIZE / 2) / texture.Height;
-                bot[i] = (yTile + botPos[i]) * (WANOK.SQUARE_SIZE / 2) / texture.Height;
-                right[i] = (xTile + rightPos[i]) * (WANOK.SQUARE_SIZE / 2) / texture.Width;
-
-                // Adjust in order to limit risk of textures flood
-                float width = left[i] + right[i];
-                float height = top[i] + bot[i];
-                left[i] += width / WANOK.COEF_BORDER_TEX;
-                right[i] -= width / WANOK.COEF_BORDER_TEX;
-                top[i] += height / WANOK.COEF_BORDER_TEX;
-                bot[i] -= height / WANOK.COEF_BORDER_TEX;
-
-                // Vertex Position and Texture
-                res[i * 4] = new VertexPositionTexture(new Vector3(x + leftPos[i], y, z + topPos[i]), new Vector2(left[i], top[i]));
-                res[i * 4 + 1] = new VertexPositionTexture(new Vector3(x + rightPos[i], y, z + topPos[i]), new Vector2(right[i], top[i]));
-                res[i * 4 + 2] = new VertexPositionTexture(new Vector3(x + rightPos[i], y, z + botPos[i]), new Vector2(right[i], bot[i]));
-                res[i * 4 + 3] = new VertexPositionTexture(new Vector3(x + leftPos[i], y, z + botPos[i]), new Vector2(left[i], bot[i]));
-            }
-
-            return res;
+                new VertexPositionTexture(new Vector3(x, y, z), new Vector2(left, top)),
+                new VertexPositionTexture(new Vector3(x+1, y, z), new Vector2(right, top)),
+                new VertexPositionTexture(new Vector3(x+1, y, z+1), new Vector2(right, bot)),
+                new VertexPositionTexture(new Vector3(x, y, z+1), new Vector2(left, bot))
+            };
         }
 
         // -------------------------------------------------------------------

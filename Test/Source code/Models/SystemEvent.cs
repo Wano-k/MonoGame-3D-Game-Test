@@ -13,7 +13,7 @@ namespace RPG_Paper_Maker
         public List<SystemEventPage> Pages;
 
         [NonSerialized()]
-        public int CurrentPage = 0;
+        public int CurrentPage = -1;
 
         // -------------------------------------------------------------------
         // SYSTEM EVENT PAGE
@@ -34,7 +34,7 @@ namespace RPG_Paper_Maker
             public class PageOptions
             {
                 public bool MoveAnimation;
-                public SystemGraphic StopAnimation;
+                public bool StopAnimation;
                 public bool DirectionFix;
                 public bool Through;
                 public bool SetWithCamera;

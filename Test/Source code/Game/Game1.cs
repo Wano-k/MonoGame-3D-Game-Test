@@ -22,7 +22,6 @@ namespace Test
 
         // Content
         public SystemGraphic HeroGraphic = new SystemGraphic("lucas.png", true, GraphicKind.Character, new object[] { 0, 0, 1, 1, 4, 0, 0 });
-        public SystemGraphic HeroActGraphic = new SystemGraphic("lucas_act.png", true, GraphicKind.Character, new object[] { 0, 0, 1, 1, 4, 0, 0 });
         public static Texture2D TexTileset, TexNone;
         public static Dictionary<int, Texture2D> TexAutotiles = new Dictionary<int, Texture2D>();
         public static Dictionary<int, Texture2D> TexReliefs = new Dictionary<int, Texture2D>();
@@ -37,7 +36,7 @@ namespace Test
         {
             // Initialize
             WANOK.Game.LoadDatas();
-            WANOK.Game.System.PathRTP = "RTP";
+            //WANOK.Game.System.PathRTP = "RTP";
 
             // Graphics
             graphics = new GraphicsDeviceManager(this);
@@ -81,8 +80,8 @@ namespace Test
 
             Map = new Map(GraphicsDevice, WANOK.Game.System.StartMapName);
             LoadSystemGraphic(HeroGraphic, GraphicsDevice);
-            LoadSystemGraphic(HeroActGraphic, GraphicsDevice);
             Hero = new Hero(GraphicsDevice, WANOK.GetVector3Position(WANOK.Game.System.StartPosition), TexCharacters[HeroGraphic]);
+            Hero.CreatePortion(GraphicsDevice, TexCharacters[HeroGraphic], false);
         }
 
         // -------------------------------------------------------------------
@@ -135,7 +134,60 @@ namespace Test
 
         public static void LoadSystemGraphic(SystemGraphic graphic, GraphicsDevice device)
         {
-            if (!TexCharacters.ContainsKey(graphic)) TexCharacters[graphic] = graphic.LoadTexture(device);
+            if (!TexCharacters.ContainsKey(graphic)) TexCharacters[graphic] = GetCharacterTexture(device, graphic.LoadTexture(device), graphic.GetCharacterAct().LoadTexture(device));
+        }
+
+        // -------------------------------------------------------------------
+        // GetCharacterTexture
+        // -------------------------------------------------------------------
+
+        public static Texture2D GetCharacterTexture(GraphicsDevice device, Texture2D graphic, Texture2D graphicAct)
+        {
+            Texture2D newTexture = new Texture2D(device, graphic.Width * 2, graphic.Height);
+            Color[] graphicData = new Color[graphic.Width * graphic.Height];
+            Color[] graphicActData = new Color[graphicAct.Width * graphicAct.Height];
+            graphic.GetData(graphicData);
+            graphicAct.GetData(graphicActData);
+            WANOK.FillImage(device, newTexture, graphicData, graphic.Width, new Rectangle(0, 0, graphic.Width, graphic.Height), new Rectangle(0, 0, graphic.Width, graphic.Height));
+            WANOK.FillImage(device, newTexture, graphicActData, graphic.Width, new Rectangle(graphic.Width, 0, graphic.Width, graphic.Height), new Rectangle(0, 0, graphic.Width, graphic.Height));
+            graphic.Dispose();
+            graphicAct.Dispose();
+
+            return newTexture;
+        }
+
+        // -------------------------------------------------------------------
+        // GetCharacterTexture
+        // -------------------------------------------------------------------
+
+        public static Texture2D GetAutotileTexture(GraphicsDevice device, Texture2D originalTexture)
+        {
+            Texture2D newTexture = new Texture2D(device, 125 * WANOK.SQUARE_SIZE, 5 * WANOK.SQUARE_SIZE);
+            Color[] imageData = new Color[originalTexture.Width * originalTexture.Height];
+            originalTexture.GetData(imageData);
+
+            int count;
+            for (int a = 0; a < Autotiles.listA.Length; a++)
+            {
+                count = 0;
+                for (int b = 0; b < Autotiles.listB.Length; b++)
+                {
+                    for (int c = 0; c < Autotiles.listC.Length; c++)
+                    {
+                        for (int d = 0; d < Autotiles.listD.Length; d++)
+                        {
+                            WANOK.FillImage(device, newTexture, imageData, originalTexture.Width, new Rectangle(count * WANOK.SQUARE_SIZE, a * WANOK.SQUARE_SIZE, WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2), new Rectangle((Autotiles.AutotileBorder[Autotiles.listA[a]] % 4) * (WANOK.SQUARE_SIZE / 2), (Autotiles.AutotileBorder[Autotiles.listA[a]] / 4) * (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2));
+                            WANOK.FillImage(device, newTexture, imageData, originalTexture.Width, new Rectangle(count * WANOK.SQUARE_SIZE + (WANOK.SQUARE_SIZE / 2), a * WANOK.SQUARE_SIZE, WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2), new Rectangle((Autotiles.AutotileBorder[Autotiles.listB[b]] % 4) * (WANOK.SQUARE_SIZE / 2), (Autotiles.AutotileBorder[Autotiles.listB[b]] / 4) * (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2));
+                            WANOK.FillImage(device, newTexture, imageData, originalTexture.Width, new Rectangle(count * WANOK.SQUARE_SIZE, a * WANOK.SQUARE_SIZE + (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2), new Rectangle((Autotiles.AutotileBorder[Autotiles.listC[c]] % 4) * (WANOK.SQUARE_SIZE / 2), (Autotiles.AutotileBorder[Autotiles.listC[c]] / 4) * (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2));
+                            WANOK.FillImage(device, newTexture, imageData, originalTexture.Width, new Rectangle(count * WANOK.SQUARE_SIZE + (WANOK.SQUARE_SIZE / 2), a * WANOK.SQUARE_SIZE + (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2), new Rectangle((Autotiles.AutotileBorder[Autotiles.listD[d]] % 4) * (WANOK.SQUARE_SIZE / 2), (Autotiles.AutotileBorder[Autotiles.listD[d]] / 4) * (WANOK.SQUARE_SIZE / 2), WANOK.SQUARE_SIZE / 2, WANOK.SQUARE_SIZE / 2));
+                            count++;
+                        }
+                    }
+                }
+            }
+            originalTexture.Dispose();
+
+            return newTexture;
         }
 
         // -------------------------------------------------------------------
@@ -173,12 +225,12 @@ namespace Test
 
             // Drawing map + hero
             Map.Draw(gameTime, effect, Camera);
-            Hero.Draw(GraphicsDevice, Camera, effect, Map.Orientation, HeroGraphic, HeroActGraphic);
+            Hero.Draw(GraphicsDevice, Camera, effect, Map.Orientation, HeroGraphic);
 
             // Interface
             /*
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, "[" + Hero.GetX() + "," + Hero.GetY() + "]", new Vector2(10, 10), Color.Black);
+            spriteBatch.DrawString(font, "[" + Hero.GetCenterX() + "," + Hero.GetCenterZ() + "]", new Vector2(10, 10), Color.White);
             spriteBatch.End();
             */
 

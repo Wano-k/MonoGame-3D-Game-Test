@@ -14,9 +14,8 @@ namespace Test
         public Vector3 Position;
         public Vector2 Size;
         public double Speed = 1.0;
-        protected int Frame = 0, FrameInactive = 0, FrameTick = 0, FrameTickInactive = 0, FrameDuration = 150, FrameDurationInactive = 200;
-        protected int Frame_inactive = 0;
-        protected bool Act = true;
+        protected int Frame = 0, FrameInactive = 0, FrameTick = 0, FrameTickInactive = 0, FrameDuration = 150, FrameDurationInactive = 200, MaxFrames;
+        protected bool Act = false;
         public Orientation OrientationEye = Orientation.South;
 
 
@@ -24,11 +23,12 @@ namespace Test
         // Constructor
         // -------------------------------------------------------------------
 
-        public Event(Vector3 position, Vector2 size)
+        public Event(Vector3 position, Vector2 size, int maxFrames)
         {
             // Position and size
             Position = position;
             Size = size;
+            MaxFrames = maxFrames;
         }
 
         // -------------------------------------------------------------------
@@ -40,6 +40,11 @@ namespace Test
             return (int)((Position.X + 1) / WANOK.SQUARE_SIZE);
         }
 
+        public float GetCenterX()
+        {
+            return Position.X + (WANOK.SQUARE_SIZE / 2);
+        }
+
         // -------------------------------------------------------------------
         // GetZ
         // -------------------------------------------------------------------
@@ -47,6 +52,11 @@ namespace Test
         public int GetZ()
         {
             return (int)((Position.Z + 1) / WANOK.SQUARE_SIZE);
+        }
+
+        public float GetCenterZ()
+        {
+            return Position.Z + (WANOK.SQUARE_SIZE / 2);
         }
 
         // -------------------------------------------------------------------

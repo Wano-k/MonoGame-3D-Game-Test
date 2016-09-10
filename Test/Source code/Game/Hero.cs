@@ -17,9 +17,9 @@ namespace Test
         // Constructor
         // -------------------------------------------------------------------
 
-        public Hero(GraphicsDevice device, Vector3 position, Texture2D texture) : base(position, new Vector2(32, 32), new Sprite(DrawType.FaceSprite, new int[] { 0, 0 }, 0), new int[] { 0, 0, 16, 16 })
+        public Hero(GraphicsDevice device, Vector3 position, Texture2D texture) : base(position, new Vector2(32, 16), 4, new Sprite(DrawType.FaceSprite, new int[] { 0, 0 }, 0), new int[] { 0, 0, 32, 32 })
         {
-            CreatePortion(device, texture, new int[] { 0, 0, 16, 16 }, false);
+
         }
 
         // -------------------------------------------------------------------
@@ -29,7 +29,6 @@ namespace Test
         public void Update(GameTime gameTime, Camera camera, Map map, KeyboardState kb)
         {
             double angle = camera.HorizontalAngle;
-            int x = GetX(), z = GetZ();
             float x_plus, z_plus;
             double speed = Speed * ((gameTime.ElapsedGameTime.Milliseconds) * SpeedBasicCoef * WANOK.SQUARE_SIZE);
             bool isAKeyDown = false;
@@ -44,7 +43,6 @@ namespace Test
             }
 
             if (kb.IsKeyDown(Keys.A)) // Left
-
             {
                 x_plus = (float)(speed * (Math.Cos((angle - 90.0) * Math.PI / 180.0)));
                 z_plus = (float)(speed * (Math.Sin((angle - 90.0) * Math.PI / 180.0)));
